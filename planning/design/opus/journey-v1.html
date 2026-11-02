@@ -1,0 +1,1524 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Record to Automate · journey screenbook v1 (Opus)</title>
+<style>
+/* =====================================================================
+   Outer document: no background, border, banner or side padding.
+   Document text follows the host theme. Every app surface is the
+   approved dark studio and owns its own colours via --r2a-* tokens.
+   ===================================================================== */
+html,body{margin:0;padding:0;background:none}
+.doc{
+  --host-fg:var(--foreground,CanvasText);
+  --host-muted:var(--muted-foreground,GrayText);
+  --host-border:var(--border,color-mix(in oklab,CanvasText 20%,transparent));
+  --r2a-font:var(--font-sans,"Cantarell","Segoe UI Variable Text","Segoe UI","Ubuntu",system-ui,sans-serif);
+  --r2a-mono:var(--font-mono,"Cascadia Mono","Ubuntu Mono","DejaVu Sans Mono",ui-monospace,monospace);
+  font-family:var(--r2a-font);color:var(--host-fg);font-size:15px;line-height:22px;
+  max-width:1360px;margin:0 auto;container-type:inline-size;
+}
+.doc *{box-sizing:border-box}
+.doc svg.i{width:18px;height:18px;flex:none;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.doc svg.i.sm{width:16px;height:16px}
+.doc svg.i.lg{width:24px;height:24px}
+.doc svg.i.xl{width:32px;height:32px;stroke-width:1.6}
+.doc svg.i.fill{fill:currentColor;stroke:none}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ---------- document header (host theme) ---------- */
+.dhead{display:grid;gap:14px;margin:0 0 28px}
+.dhead h1{font-size:26px;line-height:32px;font-weight:650;margin:0;letter-spacing:-.01em}
+.dhead .lede{margin:0;font-size:16px;line-height:24px;max-width:72ch}
+.dhead .sub{margin:0;font-size:14px;line-height:21px;color:var(--host-muted);max-width:80ch}
+.keyrow{display:flex;flex-wrap:wrap;gap:8px}
+.lab{display:inline-flex;align-items:center;gap:6px;font-size:12px;line-height:16px;font-weight:600;border-radius:999px;padding:3px 10px;white-space:nowrap;border:1px solid var(--host-border);color:var(--host-fg)}
+.lab::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor;opacity:.9}
+.lab.real{color:#3f9a72}.lab.ill{color:#b9842a}.lab.ex{color:#5b84c9}.lab.prop{color:#b0569a}.lab.sys{color:#7c7c86}
+.thesis{display:grid;gap:12px;grid-template-columns:1fr;margin:4px 0 0}
+@container (min-width:900px){.thesis{grid-template-columns:repeat(3,1fr)}}
+.thesis div{border:1px solid var(--host-border);border-radius:12px;padding:14px 16px}
+.thesis b{display:block;font-size:15px;line-height:21px;margin-bottom:4px}
+.thesis p{margin:0;font-size:14px;line-height:20px;color:var(--host-muted)}
+.toc{display:grid;gap:6px 18px;grid-template-columns:1fr;margin:0;padding:0;list-style:none;font-size:14px;line-height:20px}
+@container (min-width:700px){.toc{grid-template-columns:1fr 1fr}}
+@container (min-width:1100px){.toc{grid-template-columns:1fr 1fr 1fr}}
+.toc a{color:inherit;text-decoration:none;display:flex;gap:10px;align-items:baseline;padding:6px 0;border-bottom:1px solid var(--host-border)}
+.toc a:hover b{text-decoration:underline}
+.toc .n{font-family:var(--r2a-mono);font-size:13px;color:var(--host-muted);flex:none;width:22px}
+.toc small{color:var(--host-muted);font-size:13px;display:block}
+.cov{width:100%;border-collapse:collapse;font-size:14px;line-height:20px}
+.cov th,.cov td{text-align:left;padding:7px 10px 7px 0;border-bottom:1px solid var(--host-border);vertical-align:top}
+.cov th{font-size:13px;color:var(--host-muted);font-weight:600}
+.cov a{color:inherit}
+details.dx{border:1px solid var(--host-border);border-radius:12px;padding:12px 16px}
+details.dx>summary{cursor:pointer;font-weight:600}
+details.dx[open]>summary{margin-bottom:10px}
+
+/* ---------- board frame (host theme) ---------- */
+.board{margin:0 0 48px;scroll-margin-top:12px}
+.bhead{display:grid;grid-template-columns:auto 1fr;gap:4px 16px;align-items:start;margin:0 0 14px}
+.bnum{grid-row:span 3;font-size:30px;line-height:34px;font-weight:700;font-family:var(--r2a-mono);color:var(--host-muted);letter-spacing:-.02em}
+.bstage{margin:0;font-size:13px;line-height:18px;color:var(--host-muted);font-weight:600}
+.bhead h2{margin:0;font-size:21px;line-height:28px;font-weight:650;letter-spacing:-.005em}
+.bcap{margin:2px 0 0;font-size:15px;line-height:22px;max-width:86ch}
+.blabels{grid-column:2;display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.bnotes{margin:12px 0 0;padding:0 0 0 18px;font-size:14px;line-height:21px;color:var(--host-muted);display:grid;gap:3px;max-width:100ch}
+.bnotes b{color:var(--host-fg);font-weight:600}
+.statecap{margin:18px 0 8px;font-size:13px;line-height:18px;font-weight:600;color:var(--host-muted);text-transform:uppercase;letter-spacing:.06em}
+
+/* =====================================================================
+   Approved dark studio tokens (same names/values as the visual study).
+   ===================================================================== */
+.app,.dark{
+  color-scheme:dark;
+  --r2a-bg:var(--r2a-dark-bg,#0f1114);
+  --r2a-surface:var(--r2a-dark-surface,#14171b);
+  --r2a-raised:var(--r2a-dark-raised,#1a1e23);
+  --r2a-overlay:var(--r2a-dark-overlay,#21262c);
+  --r2a-hover:var(--r2a-dark-hover,#262c33);
+  --r2a-line:var(--r2a-dark-line,#272d34);
+  --r2a-line-strong:var(--r2a-dark-line-strong,#39414a);
+  --r2a-text:var(--r2a-dark-text,#eceef1);
+  --r2a-text-2:var(--r2a-dark-text-2,#aeb5be);
+  --r2a-text-3:var(--r2a-dark-text-3,#8a929c);
+  --r2a-accent:var(--r2a-dark-accent,#8fb8ff);
+  --r2a-accent-ink:var(--r2a-dark-accent-ink,#0b1424);
+  --r2a-accent-soft:color-mix(in oklab,var(--r2a-accent) 15%,transparent);
+  --r2a-safe:var(--r2a-dark-safe,#72dcaa);
+  --r2a-point:var(--r2a-dark-point,#ffd37d);
+  --r2a-warn:var(--r2a-dark-warn,#f2c063);
+  --r2a-danger:var(--r2a-dark-danger,#ff8b82);
+  --r2a-evidence:var(--r2a-dark-evidence,#c7b3ff); /* new: read-only replay only */
+  --r2a-radius:calc(var(--radius,8px) + 4px);
+  --r2a-radius-sm:var(--radius,8px);
+  color:var(--r2a-text);font-size:14px;line-height:20px;
+}
+.app{container-type:inline-size;background:var(--r2a-bg);border-radius:var(--r2a-radius);overflow:hidden;border:1px solid var(--r2a-line);position:relative}
+
+/* ---------- app chrome ---------- */
+.appbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 18px;padding:10px 20px;border-bottom:1px solid var(--r2a-line);background:var(--r2a-surface)}
+.brand{display:inline-flex;gap:8px;align-items:center;font-size:14px;font-weight:650;margin-right:6px}
+.brand svg{color:var(--r2a-danger)}
+.anav{display:flex;gap:4px;margin-right:auto}
+.anav span{padding:5px 12px;border-radius:999px;font-size:14px;color:var(--r2a-text-2)}
+.anav span.on{background:var(--r2a-overlay);color:var(--r2a-text);font-weight:600}
+.where{display:inline-flex;gap:6px;align-items:center;font-size:13px;line-height:18px;color:var(--r2a-text-2)}
+.where svg{color:var(--r2a-safe)}
+.where.online{color:var(--r2a-warn)}.where.online svg{color:var(--r2a-warn)}
+.top{display:flex;flex-wrap:wrap;gap:12px 16px;align-items:center;padding:20px 24px 16px}
+.top .ttl{margin-right:auto;min-width:0}
+.top h3{font-size:24px;line-height:32px;font-weight:650;margin:0;letter-spacing:-.01em}
+.top .ttl p{margin:2px 0 0;font-size:13px;line-height:18px;color:var(--r2a-text-2);display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center}
+.acts{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.tabs{display:flex;gap:4px;padding:0 24px;border-bottom:1px solid var(--r2a-line)}
+.tabs span{display:inline-flex;gap:8px;align-items:center;padding:10px 12px 12px;font-size:14px;color:var(--r2a-text-2);border-bottom:2px solid transparent;margin-bottom:-1px}
+.tabs span.on{color:var(--r2a-text);font-weight:600;border-bottom-color:var(--r2a-accent)}
+.body{padding:20px 24px 24px;display:grid;gap:20px;grid-template-columns:minmax(0,1fr)}
+@container (min-width:960px){
+  .body.split{grid-template-columns:minmax(0,1fr) 380px;align-items:start}
+  .body.split-l{grid-template-columns:340px minmax(0,1fr);align-items:start}
+  .body.three{grid-template-columns:repeat(3,minmax(0,1fr));align-items:start}
+  .body.two{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}
+  .body.settings{grid-template-columns:220px minmax(0,1fr);align-items:start}
+}
+@container (min-width:640px) and (max-width:959px){
+  .body.two,.body.three{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+.panel{background:var(--r2a-surface);border-radius:var(--r2a-radius);padding:20px;min-width:0}
+.panel.flat{background:transparent;padding:0}
+.stack{display:grid;gap:16px;min-width:0;align-content:start}
+.ministate>.st,.ministate>.btn,.stack>.btn,.stack>.st{justify-self:start}
+.stack.tight{gap:10px}
+
+/* ---------- type ---------- */
+.kicker{font-size:13px;line-height:18px;color:var(--r2a-text-2);margin:0}
+.h-sec{font-size:20px;line-height:26px;font-weight:650;margin:2px 0 0;letter-spacing:-.005em}
+.h-hero{font-size:30px;line-height:38px;font-weight:650;margin:0;letter-spacing:-.015em}
+.h-sub{font-size:16px;line-height:22px;font-weight:600;margin:0}
+.support{font-size:14px;line-height:20px;color:var(--r2a-text-2);margin:4px 0 0}
+.note{font-size:13px;line-height:18px;color:var(--r2a-text-2);margin:0}
+.caption{font-size:12px;line-height:16px;color:var(--r2a-text-3)}
+.mono{font-family:var(--r2a-mono);font-size:13px}
+.link{color:var(--r2a-accent);text-decoration:underline;text-decoration-color:color-mix(in oklab,var(--r2a-accent) 45%,transparent);text-underline-offset:3px}
+
+/* ---------- controls (static) ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:36px;padding:0 14px;border-radius:var(--r2a-radius-sm);
+  border:1px solid var(--r2a-line-strong);background:var(--r2a-raised);font-size:14px;line-height:20px;font-weight:550;white-space:nowrap;color:var(--r2a-text)}
+.btn.primary{background:var(--r2a-accent);color:var(--r2a-accent-ink);border-color:transparent}
+.btn.quiet{background:transparent;border-color:transparent;color:var(--r2a-text-2)}
+.btn.small{min-height:32px;padding:0 12px;font-size:13px}
+.btn.big{min-height:44px;padding:0 20px;font-size:15px}
+.btn.stop{background:var(--r2a-danger);color:#2a0705;border-color:transparent;font-weight:700}
+.btn.dis{opacity:.45}
+.btn .dot{width:9px;height:9px;border-radius:50%;background:var(--r2a-danger)}
+.btn.primary .dot{background:var(--r2a-accent-ink)}
+.kbd{display:inline-flex;align-items:center;min-height:22px;padding:0 7px;border-radius:5px;border:1px solid var(--r2a-line-strong);border-bottom-width:2px;background:var(--r2a-overlay);font-family:var(--r2a-mono);font-size:12px;line-height:16px;color:var(--r2a-text)}
+.btnrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.seg{display:inline-flex;padding:3px;border-radius:var(--r2a-radius-sm);background:var(--r2a-bg);border:1px solid var(--r2a-line)}
+.seg span{display:inline-flex;align-items:center;gap:6px;min-height:30px;padding:0 12px;border-radius:6px;font-size:13px;color:var(--r2a-text-2)}
+.seg span.on{background:var(--r2a-overlay);color:var(--r2a-text);font-weight:600}
+.seg.wide{display:flex;width:100%}.seg.wide span{flex:1;justify-content:center}
+.choice{display:grid;grid-template-columns:20px 1fr;column-gap:10px;row-gap:2px;align-items:start;padding:12px 14px;border-radius:var(--r2a-radius-sm);border:1px solid var(--r2a-line);background:var(--r2a-raised)}
+.choice.on{border-color:var(--r2a-accent);background:color-mix(in oklab,var(--r2a-accent) 9%,var(--r2a-raised))}
+.choice .rb{grid-row:span 2;width:18px;height:18px;margin-top:1px;border-radius:50%;border:2px solid var(--r2a-line-strong)}
+.choice.on .rb{border-color:var(--r2a-accent);box-shadow:inset 0 0 0 3px var(--r2a-raised),inset 0 0 0 9px var(--r2a-accent)}
+.choice .cb{grid-row:span 2;width:18px;height:18px;margin-top:1px;border-radius:5px;border:2px solid var(--r2a-line-strong)}
+.choice .cb.on{background:var(--r2a-accent);border-color:var(--r2a-accent);box-shadow:inset 0 0 0 3px var(--r2a-raised)}
+.choice b{font-size:14px;line-height:20px;font-weight:600}
+.choice span:not(.rb):not(.cb){font-size:13px;line-height:18px;color:var(--r2a-text-2)}
+.choice.dim{opacity:.6}
+.field{display:grid;gap:6px}
+.field .lab2{font-size:14px;line-height:20px;font-weight:550}
+.input{min-height:36px;border-radius:var(--r2a-radius-sm);border:1px solid var(--r2a-line-strong);background:var(--r2a-raised);padding:7px 10px;font-size:14px;line-height:20px}
+.range{position:relative;height:20px}
+.range::before{content:"";position:absolute;left:0;right:0;top:9px;height:3px;border-radius:2px;background:var(--r2a-line-strong)}
+.range i{position:absolute;left:0;top:9px;height:3px;border-radius:2px;background:var(--r2a-accent)}
+.range b{position:absolute;top:2px;width:16px;height:16px;margin-left:-8px;border-radius:50%;background:var(--r2a-accent);box-shadow:0 0 0 3px var(--r2a-bg)}
+.toggle{display:inline-block;width:38px;height:22px;border-radius:999px;background:var(--r2a-line-strong);position:relative;flex:none}
+.toggle::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:var(--r2a-text-2)}
+.toggle.on{background:var(--r2a-accent)}.toggle.on::after{left:19px;background:var(--r2a-accent-ink)}
+.row{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.row.start{justify-content:flex-start}
+.divider{height:1px;background:var(--r2a-line);margin:2px 0}
+
+/* ---------- status vocabulary: always icon + words ---------- */
+.st{display:inline-flex;gap:6px;align-items:center;font-size:13px;line-height:18px;font-weight:600;padding:3px 10px 3px 8px;border-radius:999px;white-space:nowrap;border:1px solid transparent}
+.st.ok{color:var(--r2a-safe);background:color-mix(in oklab,var(--r2a-safe) 12%,transparent)}
+.st.warn{color:var(--r2a-warn);background:color-mix(in oklab,var(--r2a-warn) 13%,transparent)}
+.st.bad{color:var(--r2a-danger);background:color-mix(in oklab,var(--r2a-danger) 13%,transparent)}
+.st.info{color:var(--r2a-accent);background:var(--r2a-accent-soft)}
+.st.unk{color:var(--r2a-text);border:1px dashed var(--r2a-text-3);background:transparent}
+.st.off{color:var(--r2a-text-2);background:var(--r2a-overlay)}
+.st.ev{color:var(--r2a-evidence);background:color-mix(in oklab,var(--r2a-evidence) 13%,transparent)}
+.st.prop{color:#f0a6dc;border:1px dashed #b0569a;background:transparent}
+.callout{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border-radius:var(--r2a-radius-sm);background:color-mix(in oklab,var(--r2a-warn) 11%,var(--r2a-raised));font-size:14px;line-height:20px}
+.callout>svg{color:var(--r2a-warn);margin-top:1px}
+.callout.ok{background:color-mix(in oklab,var(--r2a-safe) 10%,var(--r2a-raised))}.callout.ok>svg{color:var(--r2a-safe)}
+.callout.bad{background:color-mix(in oklab,var(--r2a-danger) 11%,var(--r2a-raised))}.callout.bad>svg{color:var(--r2a-danger)}
+.callout.info{background:color-mix(in oklab,var(--r2a-accent) 10%,var(--r2a-raised))}.callout.info>svg{color:var(--r2a-accent)}
+.callout.plain{background:var(--r2a-raised)}.callout.plain>svg{color:var(--r2a-text-2)}
+.callout b{font-weight:650}
+.callout p{margin:2px 0 0;color:var(--r2a-text-2);font-size:13px;line-height:18px}
+
+/* ---------- screenshot crops (real image, CSS-cropped; never edited) ---------- */
+.crop{position:relative;overflow:hidden;border-radius:var(--r2a-radius-sm);background:#000;isolation:isolate;width:100%}
+.crop>img{position:absolute;max-width:none;display:block;user-select:none}
+.c-full{aspect-ratio:16/9}.c-full>img{width:100%;left:0;top:0}
+/* source rect [1700,840,300,187.5] */
+.c-mail{aspect-ratio:16/10}.c-mail>img{width:666.667%;left:-566.667%;top:-448%}
+/* source rect [1150,620,400,280] */
+.c-exp{aspect-ratio:10/7}.c-exp>img{width:500%;left:-287.5%;top:-221.43%}
+.fr-badge{position:absolute;z-index:3;left:8px;top:8px;display:inline-flex;gap:6px;align-items:center;font-size:12px;line-height:16px;font-weight:600;padding:2px 8px;border-radius:5px;background:rgba(10,12,15,.86);color:#fff}
+.fr-badge::before{content:"";width:7px;height:7px;border-radius:50%;background:#72dcaa}
+.fr-badge.ill::before{background:#f2c063}
+.fr-badge.r{left:auto;right:8px}
+.ov{position:absolute;pointer-events:none;z-index:2}
+.ov.search{border:2px dashed rgba(255,255,255,.9);box-shadow:0 0 0 1px rgba(0,0,0,.55),inset 0 0 0 1px rgba(0,0,0,.55);border-radius:6px}
+.ov.target{border:2px solid var(--r2a-accent);box-shadow:0 0 0 2px rgba(0,0,0,.6);border-radius:4px}
+.ov.safe{background:color-mix(in oklab,var(--r2a-safe) 30%,transparent);border:1.5px solid var(--r2a-safe);border-radius:3px}
+.ov.excl{background:repeating-linear-gradient(45deg,rgba(0,0,0,.55) 0 3px,rgba(255,139,130,.6) 3px 6px);border:1px solid var(--r2a-danger);border-radius:2px}
+.ov.cand{border:2px dashed var(--r2a-warn);border-radius:6px;box-shadow:0 0 0 1.5px rgba(0,0,0,.7)}
+.ov.cand::after{content:attr(data-n);position:absolute;right:-9px;top:-9px;width:18px;height:18px;border-radius:50%;background:var(--r2a-warn);color:#1d1404;font-size:12px;line-height:18px;font-weight:700;text-align:center}
+.ov.pt{width:7px;height:7px;margin:-3.5px 0 0 -3.5px;border-radius:50%;background:#fff;box-shadow:0 0 0 1.5px rgba(0,0,0,.75)}
+.ov.click{width:22px;height:22px;margin:-11px 0 0 -11px;border-radius:50%;border:2.5px solid var(--r2a-point);box-shadow:0 0 0 1.5px rgba(0,0,0,.7),inset 0 0 0 1.5px rgba(0,0,0,.7)}
+.ov.click::after{content:"";position:absolute;left:50%;top:50%;width:4px;height:4px;margin:-2px 0 0 -2px;border-radius:50%;background:var(--r2a-point)}
+.ov.dim{background:rgba(6,8,10,.55)}
+.ov.tag{font-size:12px;line-height:16px;font-weight:600;padding:2px 7px;border-radius:5px;background:rgba(10,12,15,.88);color:#fff;white-space:nowrap;transform:translateY(calc(-100% - 4px))}
+.ov.tag.below{transform:translateY(4px)}
+.ov.tag.right{transform:translate(-100%,calc(-100% - 4px))}
+.ov.tag.right.below{transform:translate(-100%,4px)}
+.notice{position:absolute;z-index:4;left:10px;right:10px;bottom:10px;display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:var(--r2a-radius-sm);
+  background:rgba(14,16,19,.94);color:#fff;font-size:13px;line-height:18px;border:1px solid var(--r2a-warn)}
+.notice svg{color:var(--r2a-warn);margin-top:1px}
+.notice.ok{border-color:var(--r2a-safe)}.notice.ok svg{color:var(--r2a-safe)}
+.legend{display:grid;gap:10px 18px;grid-template-columns:1fr;margin-top:14px;font-size:13px;line-height:18px;color:var(--r2a-text-2)}
+@container (min-width:620px){.legend{grid-template-columns:repeat(2,1fr)}}
+.legend>span{display:grid;grid-template-columns:22px 1fr;gap:8px;align-items:start}
+.legend b{color:var(--r2a-text);font-weight:600}
+.sw{display:inline-block;width:18px;height:13px;border-radius:3px;margin-top:2px}
+.sw.search{border:2px dashed rgba(255,255,255,.85)}
+.sw.target{border:2px solid var(--r2a-accent)}
+.sw.safe{background:color-mix(in oklab,var(--r2a-safe) 35%,transparent);border:1.5px solid var(--r2a-safe)}
+.sw.click{width:15px;height:15px;border-radius:50%;border:2.5px solid var(--r2a-point)}
+.sw.excl{background:repeating-linear-gradient(45deg,#000 0 3px,var(--r2a-danger) 3px 6px)}
+.sw.pt{width:8px;height:8px;border-radius:50%;background:#fff;margin:4px 0 0 4px}
+.sw.cand{border:2px dashed var(--r2a-warn)}
+
+/* ---------- illustrative (not real) game screens ---------- */
+.illus{position:relative;border-radius:var(--r2a-radius-sm);overflow:hidden;aspect-ratio:16/10;width:100%;
+  background:repeating-linear-gradient(135deg,#1b1f24 0 10px,#171a1f 10px 20px);border:1px dashed #5a636e;display:grid;place-items:center;padding:28px 16px 16px}
+.illus.wide{aspect-ratio:16/9}
+.wf{width:min(78%,360px);border-radius:10px;background:#262b31;border:1px solid #444c56;padding:12px;display:grid;gap:8px;color:#cfd5dc}
+.wf .t{display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:650}
+.wf .t i{width:16px;height:16px;border-radius:50%;border:1.5px solid #7d8692;display:inline-block}
+.wf .r{height:22px;border-radius:5px;background:#30363e;display:flex;align-items:center;padding:0 8px;font-size:12px;color:#9aa3ad}
+.wf .r.hl{outline:2px solid var(--r2a-accent);outline-offset:1px;color:#fff}
+.wf .b{justify-self:center;min-width:46%;text-align:center;font-size:12px;font-weight:650;padding:5px 10px;border-radius:6px;background:#3c4652;color:#e7ebef}
+.wf .b.gone{background:transparent;border:1.5px dashed #6c7580;color:#8f98a2}
+.illus .empty{color:#9aa3ad;font-size:13px;text-align:center;max-width:30ch}
+
+/* ---------- lists ---------- */
+.alist{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.aitem{display:grid;grid-template-columns:28px 1fr auto;gap:12px;align-items:center;padding:10px 12px;border-radius:var(--r2a-radius-sm);border:1px solid var(--r2a-line);background:var(--r2a-raised)}
+.aitem.on{border-color:var(--r2a-accent);background:color-mix(in oklab,var(--r2a-accent) 9%,var(--r2a-raised))}
+.aitem.sel{border-color:var(--r2a-warn);border-style:dashed;background:color-mix(in oklab,var(--r2a-warn) 7%,var(--r2a-raised))}
+.aitem .num{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:650;background:var(--r2a-overlay);color:var(--r2a-text-2)}
+.aitem.on .num{background:var(--r2a-accent);color:var(--r2a-accent-ink)}
+.aitem .tx{min-width:0;display:grid}
+.aitem .tx b{font-size:14px;line-height:20px;font-weight:600}
+.aitem .tx span{font-size:13px;line-height:18px;color:var(--r2a-text-2);display:flex;gap:6px;align-items:center}
+.aitem .tx span svg{color:var(--r2a-text-3)}
+.sentence{padding:14px 16px;border-radius:var(--r2a-radius-sm);background:var(--r2a-raised);border-left:3px solid var(--r2a-accent);font-size:15px;line-height:23px}
+.sentence .m{padding:1px 6px;border-radius:4px;font-weight:600;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.sentence .m.t{box-shadow:inset 0 0 0 1.5px var(--r2a-accent)}
+.sentence .m.s{box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.75);border:0;background:repeating-linear-gradient(90deg,transparent 0 0)}
+.sentence .m.g{background:color-mix(in oklab,var(--r2a-safe) 25%,transparent);box-shadow:inset 0 0 0 1.5px var(--r2a-safe)}
+
+/* timeline strip */
+.strip{position:relative;padding:30px 4px 8px}
+.strip .bar{height:6px;border-radius:3px;background:var(--r2a-line-strong);position:relative}
+.strip .bar .played{position:absolute;left:0;top:0;bottom:0;border-radius:3px;background:color-mix(in oklab,var(--r2a-accent) 50%,var(--r2a-line-strong))}
+.strip .mk{position:absolute;top:8px;transform:translateX(-50%);display:grid;justify-items:center;gap:6px}
+.strip .mk b{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:650;background:var(--r2a-overlay);border:1px solid var(--r2a-line-strong);color:var(--r2a-text-2)}
+.strip .mk.on b{background:var(--r2a-accent);color:var(--r2a-accent-ink);border-color:transparent}
+.strip .mk.w b{border-color:var(--r2a-warn);color:var(--r2a-warn)}
+.strip .ticks{display:flex;justify-content:space-between;margin-top:8px;font-size:12px;color:var(--r2a-text-3);font-family:var(--r2a-mono)}
+.strip .rng{position:absolute;top:2px;height:52px;border-radius:8px;border:2px dashed var(--r2a-warn);background:color-mix(in oklab,var(--r2a-warn) 8%,transparent)}
+
+/* facts */
+.facts{display:grid;grid-template-columns:auto 1fr;gap:8px 16px;margin:0;font-size:13px;line-height:18px}
+.facts dt{color:var(--r2a-text-2)}
+.facts dd{margin:0}
+.checklist{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.checklist li{display:grid;grid-template-columns:32px 1fr auto;gap:12px;align-items:center;padding:12px 14px;border-radius:var(--r2a-radius-sm);background:var(--r2a-raised)}
+.checklist li .ic{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:var(--r2a-overlay);color:var(--r2a-text-2)}
+.checklist li b{display:block;font-size:14px;line-height:20px;font-weight:600}
+.checklist li span.d{display:block;font-size:13px;line-height:18px;color:var(--r2a-text-2)}
+@container (max-width:560px){.checklist li{grid-template-columns:32px 1fr}.checklist li>:last-child{grid-column:2}}
+.collapsed{display:flex;gap:10px;align-items:center;border-top:1px solid var(--r2a-line);padding-top:14px;font-size:15px;font-weight:600}
+.collapsed .hint{margin-left:auto;font-size:13px;font-weight:400;color:var(--r2a-text-3)}
+.collapsed svg{color:var(--r2a-text-2)}
+
+/* flow */
+.flow{list-style:none;margin:0;padding:0;display:grid}
+.flow>li{position:relative;padding:0 0 18px}
+.flow>li::before{content:"";position:absolute;left:19px;top:40px;bottom:0;width:2px;background:var(--r2a-line-strong)}
+.flow>li:last-child::before{display:none}
+.fn{display:grid;grid-template-columns:40px 1fr;gap:14px;align-items:start}
+.fn .ico{position:relative;z-index:1;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:var(--r2a-raised);border:1px solid var(--r2a-line-strong);color:var(--r2a-text-2)}
+.fn.rec .ico{color:var(--r2a-danger)}
+.fn.if .ico{color:var(--r2a-accent);border-radius:10px;transform:rotate(45deg)}
+.fn.if .ico svg{transform:rotate(-45deg)}
+.fn .card{padding:8px 14px 10px;border-radius:var(--r2a-radius-sm);border:1px solid transparent}
+.fn.on .card{background:var(--r2a-raised);border-color:var(--r2a-accent)}
+.fn .card b{display:block;font-size:16px;line-height:22px;font-weight:600}
+.fn .card>span{display:block;font-size:13px;line-height:18px;color:var(--r2a-text-2)}
+.lanes{display:grid;gap:10px;margin:10px 0 0 54px;grid-template-columns:1fr}
+@container (min-width:620px){.lanes{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.lane{border-radius:var(--r2a-radius-sm);background:var(--r2a-bg);border:1px solid var(--r2a-line);padding:10px 12px;display:grid;gap:6px;align-content:start}
+.lane .ll{font-size:13px;line-height:18px;display:flex;gap:6px;align-items:center;font-weight:650}
+.lane .ll.yes{color:var(--r2a-safe)}.lane .ll.no{color:var(--r2a-text)}.lane .ll.unk{color:var(--r2a-warn)}
+.lane .lt{font-size:14px;line-height:20px;font-weight:600;display:flex;gap:8px;align-items:center}
+.lane .lt svg{color:var(--r2a-danger)}
+.lane .ld{font-size:13px;line-height:18px;color:var(--r2a-text-2)}
+.lane.unrec{border-style:dashed;border-color:var(--r2a-text-3);background:transparent}
+.lane.stopl{border-color:color-mix(in oklab,var(--r2a-warn) 45%,var(--r2a-line))}
+
+/* values */
+.vitem{display:grid;gap:4px;padding:14px 16px;border-radius:var(--r2a-radius-sm);background:var(--r2a-raised);border:1px solid transparent}
+.vitem.on{border-color:var(--r2a-accent)}
+.vitem .vn{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.vitem .vn b{font-family:var(--r2a-mono);font-size:15px;font-weight:600}
+.vitem p{margin:0;font-size:13px;line-height:18px;color:var(--r2a-text-2)}
+.vflow{display:grid;grid-template-columns:1fr;gap:8px;align-items:center}
+@container (min-width:520px){.vflow{grid-template-columns:1fr 28px 1fr 28px 1fr}}
+.vbox{padding:10px 12px;border-radius:var(--r2a-radius-sm);background:var(--r2a-raised);border:1px solid var(--r2a-line);font-size:13px;line-height:18px}
+.vbox b{display:block;font-size:14px;line-height:20px;color:var(--r2a-text)}
+.vbox span{color:var(--r2a-text-2)}
+.vbox.val{border-color:var(--r2a-accent)}
+.arrow{color:var(--r2a-text-3);justify-self:center}
+@container (max-width:519px){.arrow{transform:rotate(90deg)}}
+
+/* HUD & live */
+.hud{display:inline-flex;align-items:center;gap:10px;padding:6px 6px 6px 12px;border-radius:999px;background:rgba(15,17,20,.94);border:1px solid #39414a;box-shadow:0 6px 20px rgba(0,0,0,.55);color:#eceef1;font-size:13px;line-height:18px;white-space:nowrap}
+.hud .rd{width:10px;height:10px;border-radius:50%;background:var(--r2a-danger);box-shadow:0 0 0 3px color-mix(in oklab,var(--r2a-danger) 30%,transparent)}
+.hud .pz{width:10px;height:10px;border-radius:2px;background:var(--r2a-warn)}
+.hud b{font-weight:650}
+.hud .t{font-family:var(--r2a-mono);font-size:13px}
+.hud .sep{width:1px;height:18px;background:#39414a}
+.hud .hb{display:inline-flex;align-items:center;gap:6px;min-height:28px;padding:0 10px;border-radius:999px;background:#262c33;font-weight:600}
+.hud .hb.stop{background:var(--r2a-danger);color:#2a0705}
+.hud-on-shot{position:absolute;z-index:4;right:8%;top:4.6%}
+@container (max-width:900px){.hud-on-shot .opt{display:none}}
+.takeover{position:absolute;inset:0;z-index:3;border:4px solid var(--r2a-danger);border-radius:var(--r2a-radius-sm);pointer-events:none;box-shadow:inset 0 0 0 1px rgba(0,0,0,.6)}
+.runbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;padding:12px 16px;background:color-mix(in oklab,var(--r2a-danger) 16%,var(--r2a-surface));border:1px solid color-mix(in oklab,var(--r2a-danger) 45%,var(--r2a-line));border-radius:var(--r2a-radius-sm)}
+.runbar .msg{margin-right:auto;display:grid}
+.runbar .msg b{font-size:15px;line-height:21px}
+.runbar .msg span{font-size:13px;line-height:18px;color:var(--r2a-text-2)}
+.minirow{display:grid;gap:12px;grid-template-columns:1fr}
+@container (min-width:760px){.minirow{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@container (min-width:560px){.minirow.shots{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.ministate{display:grid;gap:10px;padding:14px;border-radius:var(--r2a-radius-sm);background:var(--r2a-surface);border:1px solid var(--r2a-line);align-content:start}
+.ministate .note{min-height:36px}
+
+/* replay (read-only evidence) */
+.replay{border-radius:var(--r2a-radius);border:2px solid color-mix(in oklab,var(--r2a-evidence) 55%,transparent);background:color-mix(in oklab,var(--r2a-evidence) 5%,var(--r2a-bg));overflow:hidden}
+.ribbon{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;padding:10px 16px;font-size:14px;line-height:20px;color:#1b1430;font-weight:650;
+  background:repeating-linear-gradient(135deg,var(--r2a-evidence) 0 14px,color-mix(in oklab,var(--r2a-evidence) 85%,white) 14px 28px)}
+.ribbon span{font-weight:500;color:#2e2547}
+.film{position:relative;padding:12px 0}
+.film::before,.film::after{content:"";position:absolute;left:0;right:0;height:8px;background:repeating-linear-gradient(90deg,color-mix(in oklab,var(--r2a-evidence) 40%,transparent) 0 10px,transparent 10px 20px)}
+.film::before{top:0}.film::after{bottom:0}
+.scrub{display:flex;gap:6px;flex-wrap:wrap}
+.scrub span{display:inline-flex;gap:6px;align-items:center;min-height:30px;padding:0 10px;border-radius:999px;border:1px solid var(--r2a-line-strong);font-size:13px;color:var(--r2a-text-2)}
+.scrub span.on{border-color:var(--r2a-evidence);color:var(--r2a-text);background:color-mix(in oklab,var(--r2a-evidence) 14%,transparent);font-weight:600}
+.scrub span.bad{border-color:color-mix(in oklab,var(--r2a-danger) 60%,transparent);color:var(--r2a-danger)}
+.runlist{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.runlist li{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;padding:12px 14px;border-radius:var(--r2a-radius-sm);background:var(--r2a-raised);border:1px solid transparent}
+.runlist li.on{border-color:var(--r2a-evidence)}
+.runlist li b{font-size:14px;line-height:20px}
+.runlist li span{grid-column:2;font-size:13px;line-height:18px;color:var(--r2a-text-2)}
+
+/* library cards */
+.cards{display:grid;gap:14px;grid-template-columns:1fr}
+@container (min-width:620px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@container (min-width:1040px){.cards{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.wcard{display:grid;gap:12px;padding:16px;border-radius:var(--r2a-radius);background:var(--r2a-surface);border:1px solid var(--r2a-line);align-content:start}
+.wcard.busy{border-color:color-mix(in oklab,var(--r2a-danger) 50%,var(--r2a-line))}
+.wcard.empty{border:1.5px dashed var(--r2a-line-strong);background:transparent;place-items:center;text-align:center;min-height:200px;align-content:center}
+.wcard h4{margin:0;font-size:17px;line-height:23px;font-weight:650}
+.wcard .meta{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:13px;line-height:18px;color:var(--r2a-text-2)}
+.wcard .meta span{display:inline-flex;gap:5px;align-items:center}
+.wthumb{height:96px;border-radius:var(--r2a-radius-sm);overflow:hidden;position:relative;background:#000}
+.wthumb .crop{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);border-radius:0}
+.wthumb.none{display:grid;place-items:center;background:repeating-linear-gradient(135deg,#1b1f24 0 10px,#171a1f 10px 20px);color:var(--r2a-text-3);font-size:12px}
+.next{display:flex;gap:10px;align-items:center;justify-content:space-between;padding-top:12px;border-top:1px solid var(--r2a-line);flex-wrap:wrap}
+.next .note b{color:var(--r2a-text)}
+
+/* overlays outside the app (system dialog, toasts) */
+.sysdlg{border-radius:12px;background:#f3f3f2;color:#1d1d1f;padding:18px;display:grid;gap:12px;box-shadow:0 10px 30px rgba(0,0,0,.45);border:1px solid #c9c9c9;font-size:14px;line-height:20px;position:relative}
+.sysdlg h5{margin:0;font-size:16px;line-height:22px;font-weight:700}
+.sysdlg p{margin:0;color:#3a3a3c}
+.sysdlg .opts{display:grid;gap:6px}
+.sysdlg .opt{display:flex;gap:10px;align-items:center;padding:8px 10px;border-radius:8px;border:1px solid #cfcfcf;background:#fff}
+.sysdlg .opt.on{border-color:#3584e4;box-shadow:inset 0 0 0 1px #3584e4}
+.sysdlg .opt i{width:46px;height:28px;border-radius:4px;background:#2b2f35;display:block;flex:none}
+.sysdlg .sb{display:flex;gap:8px;justify-content:flex-end}
+.sysdlg .sb span{padding:6px 14px;border-radius:8px;background:#e1e1e1;font-weight:600;font-size:13px}
+.sysdlg .sb span.p{background:#3584e4;color:#fff}
+.syslabel{position:absolute;top:-11px;left:14px;font-size:12px;line-height:16px;font-weight:700;padding:2px 8px;border-radius:999px;background:#7c7c86;color:#fff}
+.toast{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:10px 14px;border-radius:var(--r2a-radius-sm);background:var(--r2a-overlay);border:1px solid var(--r2a-line-strong);font-size:14px;line-height:20px;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.toast>span{display:inline-flex;gap:8px;align-items:center}
+.toast svg{color:var(--r2a-safe)}
+.sheet{border-radius:var(--r2a-radius);background:var(--r2a-surface);border:1px solid var(--r2a-line-strong);box-shadow:0 18px 40px rgba(0,0,0,.45);padding:22px;display:grid;gap:18px}
+.stepn{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--r2a-overlay);font-size:12px;font-weight:700;color:var(--r2a-text-2);margin-right:8px;vertical-align:-1px}
+.win{display:grid;grid-template-columns:92px 1fr auto;gap:12px;align-items:center;padding:10px;border-radius:var(--r2a-radius-sm);border:1px solid var(--r2a-line);background:var(--r2a-raised)}
+.win.on{border-color:var(--r2a-accent);background:color-mix(in oklab,var(--r2a-accent) 9%,var(--r2a-raised))}
+.win .wt{height:52px;border-radius:6px;overflow:hidden;position:relative;background:#000}
+.win .wt.ph{display:grid;place-items:center;background:var(--r2a-overlay);color:var(--r2a-text-2)}
+.win b{display:block;font-size:14px;line-height:20px}
+.win span{font-size:13px;line-height:18px;color:var(--r2a-text-2)}
+.hero{display:grid;gap:18px;padding:36px 32px;border-radius:var(--r2a-radius);background:radial-gradient(120% 140% at 0% 0%,color-mix(in oklab,var(--r2a-accent) 12%,var(--r2a-surface)) 0%,var(--r2a-surface) 60%)}
+.how{display:grid;gap:12px;grid-template-columns:1fr}
+@container (min-width:640px){.how{grid-template-columns:repeat(3,1fr)}}
+.how div{padding:14px;border-radius:var(--r2a-radius-sm);background:var(--r2a-raised);display:grid;gap:6px;align-content:start}
+.how div svg{color:var(--r2a-accent)}
+.how b{font-size:15px;line-height:21px}
+.how span{font-size:13px;line-height:18px;color:var(--r2a-text-2)}
+.compare{display:grid;gap:14px;grid-template-columns:1fr}
+@container (min-width:600px){.compare{grid-template-columns:1fr 1fr}}
+.compare h5{margin:0 0 8px;font-size:13px;line-height:18px;color:var(--r2a-text-2);font-weight:600;display:flex;gap:8px;align-items:center}
+.compare ol{margin:10px 0 0;padding-left:22px;font-size:14px;line-height:24px}
+.compare li.gone{color:var(--r2a-text-3);text-decoration:line-through}
+.compare li.add{color:var(--r2a-safe)}
+.compare .crop,.compare .illus{max-width:440px}
+.provider{display:grid;gap:12px;padding:16px;border-radius:var(--r2a-radius-sm);background:var(--r2a-raised);border:1px solid var(--r2a-line)}
+.provider.dim{background:transparent;border-style:dashed}
+.provider .ph{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.provider .ph b{font-size:16px;line-height:22px;margin-right:auto}
+.pgrid{display:grid;gap:14px;grid-template-columns:1fr}
+@container (min-width:700px){.pgrid{grid-template-columns:1fr 1fr}}
+.snav{display:grid;gap:2px}
+.snav span{padding:8px 12px;border-radius:var(--r2a-radius-sm);font-size:14px;color:var(--r2a-text-2);display:flex;gap:8px;align-items:center}
+.snav span.on{background:var(--r2a-raised);color:var(--r2a-text);font-weight:600}
+@container (max-width:959px){.snav{display:flex;flex-wrap:wrap}}
+.sendlist{list-style:none;margin:0;padding:0;display:grid;gap:6px;font-size:14px;line-height:20px}
+.sendlist li{display:flex;gap:8px;align-items:flex-start}
+.sendlist .y{color:var(--r2a-warn)}.sendlist .n{color:var(--r2a-text-3)}
+.timer{font-family:var(--r2a-mono);font-size:13px;color:var(--r2a-text-2)}
+.bigicon{width:56px;height:56px;border-radius:16px;display:grid;place-items:center;background:color-mix(in oklab,var(--r2a-danger) 16%,var(--r2a-raised));color:var(--r2a-danger)}
+.bigicon.warn{background:color-mix(in oklab,var(--r2a-warn) 14%,var(--r2a-raised));color:var(--r2a-warn)}
+.bigicon.ok{background:color-mix(in oklab,var(--r2a-safe) 14%,var(--r2a-raised));color:var(--r2a-safe)}
+.pairs{display:grid;gap:14px;grid-template-columns:1fr}
+@container (min-width:640px){.pairs{grid-template-columns:1fr 1fr}}
+.pairs h5{margin:0 0 8px;font-size:13px;color:var(--r2a-text-2);font-weight:600;display:flex;gap:8px;align-items:center}
+.choicebox{display:grid;gap:8px;padding:14px;border-radius:var(--r2a-radius-sm);border:1px solid var(--r2a-line);background:var(--r2a-raised)}
+.choicebox.inspect{border-color:color-mix(in oklab,var(--r2a-evidence) 55%,var(--r2a-line))}
+.choicebox.inspect .h-sub svg{color:var(--r2a-evidence)}
+.choicebox.restart{border-color:color-mix(in oklab,var(--r2a-danger) 40%,var(--r2a-line))}
+.choicebox .h-sub{display:flex;gap:8px;align-items:center}
+
+@container (max-width:560px){
+  .top,.body{padding-left:16px;padding-right:16px}
+  .tabs{padding:0 10px;overflow-x:auto}
+  .appbar{padding:10px 16px}
+  .panel{padding:16px}
+  .top h3{font-size:22px;line-height:28px}
+  .hero{padding:24px 18px}
+  .h-hero{font-size:24px;line-height:31px}
+}
+@container (max-width:640px){
+  .doc .bnum{font-size:22px;line-height:28px}
+}
+</style>
+</head>
+<body>
+<div class="doc">
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<defs>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4.5v15l12-7.5z"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 24 24"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></symbol>
+  <symbol id="i-stop" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></symbol>
+  <symbol id="i-rec" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.5" fill="currentColor"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8 12.5 2.7 2.7L16 9.8"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3.5 2.5 20h19z"/><path d="M12 10v4.5M12 17.2v.3"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m9 9 6 6M15 9l-6 6"/></symbol>
+  <symbol id="i-q" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.5a2.5 2.5 0 1 1 3.4 2.3c-.6.3-1 .8-1 1.5v.7M12 17v.3"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h15M14 7l5 5-5 5"/></symbol>
+  <symbol id="i-pointer" viewBox="0 0 24 24"><path d="M5 3.5 18.5 10l-6 1.8L10 18z"/><path d="m12.5 11.8 5 5"/></symbol>
+  <symbol id="i-text" viewBox="0 0 24 24"><path d="M5 6V4.5h14V6M12 4.5v15M9 19.5h6"/></symbol>
+  <symbol id="i-image" viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="15" rx="2"/><circle cx="9" cy="10" r="1.8"/><path d="m4 18 5.5-5 4 3.5 2.5-2 4 3.5"/></symbol>
+  <symbol id="i-cross" viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/><path d="M12 2v5M12 17v5M2 12h5M17 12h5"/></symbol>
+  <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></symbol>
+  <symbol id="i-flow" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="6" rx="1.5"/><rect x="14" y="15" width="7" height="6" rx="1.5"/><path d="M6.5 9v4a2 2 0 0 0 2 2H14"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1"/><circle cx="4.5" cy="12" r="1"/><circle cx="4.5" cy="18" r="1"/></symbol>
+  <symbol id="i-laptop" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="11" rx="1.5"/><path d="M2 19h20"/></symbol>
+  <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M7 18h10a4 4 0 0 0 .6-7.96A6 6 0 0 0 6.1 11 3.5 3.5 0 0 0 7 18z"/></symbol>
+  <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18"/></symbol>
+  <symbol id="i-redo" viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></symbol>
+  <symbol id="i-undo" viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5.5A1.5 1.5 0 0 0 14.5 4h-9A1.5 1.5 0 0 0 4 5.5v9A1.5 1.5 0 0 0 5.5 16H8"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-film" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 4v16M17 4v16M3 8h4M3 12h4M3 16h4M17 8h4M17 12h4M17 16h4"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></symbol>
+  <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3.5 7.5A1.5 1.5 0 0 1 5 6h4l2 2h8a1.5 1.5 0 0 1 1.5 1.5v8A1.5 1.5 0 0 1 19 19H5a1.5 1.5 0 0 1-1.5-1.5z"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 3.5H7A1.5 1.5 0 0 0 5.5 5v14A1.5 1.5 0 0 0 7 20.5h10a1.5 1.5 0 0 0 1.5-1.5V8z"/><path d="M14 3.5V8h4.5M9 13h6M9 16.5h4"/></symbol>
+  <symbol id="i-camera" viewBox="0 0 24 24"><path d="M4 8h3l1.5-2.5h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.5"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></symbol>
+  <symbol id="i-monitor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M9 20h6M12 16v4"/></symbol>
+  <symbol id="i-keyboard" viewBox="0 0 24 24"><rect x="2.5" y="6" width="19" height="12" rx="2"/><path d="M6 10h.01M9.5 10h.01M13 10h.01M16.5 10h.01M7 14h10"/></symbol>
+  <symbol id="i-hand" viewBox="0 0 24 24"><path d="M8 13V5.5a1.5 1.5 0 0 1 3 0V11M11 10.5V4.5a1.5 1.5 0 0 1 3 0V11M14 10.5V6a1.5 1.5 0 0 1 3 0v8a6 6 0 0 1-6 6h-.5A5.5 5.5 0 0 1 6 17.4L4.3 14a1.5 1.5 0 0 1 2.6-1.5L8 14"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></symbol>
+  <symbol id="i-history" viewBox="0 0 24 24"><path d="M3.5 12a8.5 8.5 0 1 0 2.5-6"/><path d="M3 4v4h4M12 8v4l3 2"/></symbol>
+  <symbol id="i-branch" viewBox="0 0 24 24"><path d="M6 4v8a4 4 0 0 0 4 4h8M6 12h12"/><path d="m15 9 3 3-3 3M15 13l3 3-3 3"/></symbol>
+  <symbol id="i-wait" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 2.5h6"/></symbol>
+  <symbol id="i-start" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M10 8.5v7l5.5-3.5z"/></symbol>
+  <symbol id="i-end" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><rect x="9" y="9" width="6" height="6" rx="1"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3 5 6v5.5c0 4.3 3 7.9 7 9.5 4-1.6 7-5.2 7-9.5V6z"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/></symbol>
+  <symbol id="i-launch" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9"/><path d="M18 14v4.5A1.5 1.5 0 0 1 16.5 20h-11A1.5 1.5 0 0 1 4 18.5v-11A1.5 1.5 0 0 1 5.5 6H10"/></symbol>
+  <symbol id="i-scissors" viewBox="0 0 24 24"><circle cx="6" cy="7" r="2.5"/><circle cx="6" cy="17" r="2.5"/><path d="M8 8.5 20 17M8 15.5 20 7"/></symbol>
+  <symbol id="i-hourglass" viewBox="0 0 24 24"><path d="M7 3.5h10M7 20.5h10M8 3.5c0 4.5 8 4.5 8 8.5s-8 4-8 8.5M16 3.5c0 4.5-8 4.5-8 8.5s8 4 8 8.5"/></symbol>
+</defs>
+</svg>
+
+<!-- =================================================================
+     DOCUMENT HEADER
+     ================================================================= -->
+<header class="dhead" id="top">
+  <h1>Record to Automate · journey screenbook</h1>
+  <p class="lede">Fourteen static boards that follow one person from first opening to coming back to a saved workflow. Every board keeps the approved dark studio, puts the screenshot at the centre of decisions, and gives one clear next step.</p>
+  <p class="sub">Opus v1, independent design proposal, 2 November 2026. It doesn't replace the <a href="../../mockups/editor-visual-studies.html">approved visual study</a> or the <a href="../../DECISIONS.md">recorded decisions</a>. The Mail example connects the boards. Only the one real Last Z screenshot is real. Everything after it is labelled.</p>
+  <div class="keyrow" aria-label="How to read the labels">
+    <span class="lab real">Real screenshot (one frame, CSS crop)</span>
+    <span class="lab ill">Illustrative screen or step</span>
+    <span class="lab ex">Example value, not a default</span>
+    <span class="lab prop">Proposal, not decided</span>
+    <span class="lab sys">External system UI (illustrative)</span>
+  </div>
+  <div class="thesis">
+    <div><b>Every step reads like a sentence</b><p>Each action says what it does in plain words, such as “Find Mail near the bottom right, then click inside the green area”. The coloured words match the marks on the screenshot.</p></div>
+    <div><b>Four answers, never a score</b><p>Found, More than one, Not found and Couldn't check always have their own icon and wording. Nothing is clicked unless exactly one target was found.</p></div>
+    <div><b>Control and evidence look different</b><p>When the app controls your mouse, you see a red frame and a Stop button that's always visible. A past run plays in a striped lavender “Replay” frame that can't click anything.</p></div>
+  </div>
+  <details class="dx" open>
+    <summary>Boards and journey coverage</summary>
+    <ol class="toc">
+      <li><a href="#b01"><span class="n">01</span><span><b>First opening</b><small>Empty library, offline, no account</small></span></a></li>
+      <li><a href="#b02"><span class="n">02</span><span><b>Setup and permissions</b><small>Ready, denied, not supported yet</small></span></a></li>
+      <li><a href="#b03"><span class="n">03</span><span><b>New recording</b><small>Pick window, attach or Steam, scope</small></span></a></li>
+      <li><a href="#b04"><span class="n">04</span><span><b>Recording</b><small>HUD: recording, paused, saving</small></span></a></li>
+      <li><a href="#b05"><span class="n">05</span><span><b>After recording</b><small>Processing, then first review</small></span></a></li>
+      <li><a href="#b06"><span class="n">06</span><span><b>Edit an action</b><small>Target, search area, safe area, preview</small></span></a></li>
+      <li><a href="#b07"><span class="n">07</span><span><b>Flow</b><small>Yes, No, Couldn't check</small></span></a></li>
+      <li><a href="#b08"><span class="n">08</span><span><b>Values and outputs</b><small>Made by, used by, files</small></span></a></li>
+      <li><a href="#b09"><span class="n">09</span><span><b>Copy and re-record</b><small>Range, compare, value loss, undo</small></span></a></li>
+      <li><a href="#b10"><span class="n">10</span><span><b>Run</b><small>Preflight, takeover, Stop</small></span></a></li>
+      <li><a href="#b11"><span class="n">11</span><span><b>Stopped or paused</b><small>Expected vs seen, effect unknown</small></span></a></li>
+      <li><a href="#b12"><span class="n">12</span><span><b>Runs and replay</b><small>Read-only evidence</small></span></a></li>
+      <li><a href="#b13"><span class="n">13</span><span><b>Settings and AI</b><small>Own login, optional online</small></span></a></li>
+      <li><a href="#b14"><span class="n">14</span><span><b>Back to the library</b><small>Saved, copy, busy, unavailable</small></span></a></li>
+    </ol>
+  </details>
+  <details class="dx">
+    <summary>Awkward states, and where to find them</summary>
+    <table class="cov">
+      <thead><tr><th>State</th><th>Board</th></tr></thead>
+      <tbody>
+        <tr><td>Empty library, no values, no runs</td><td><a href="#b01">01</a>, <a href="#b08">08</a>, <a href="#b12">12</a></td></tr>
+        <tr><td>Permission denied, unsupported session</td><td><a href="#b02">02</a></td></tr>
+        <tr><td>Window minimised, game still loading</td><td><a href="#b03">03</a></td></tr>
+        <tr><td>Processing after recording, actions needing a look</td><td><a href="#b05">05</a></td></tr>
+        <tr><td>Found, more than one, not found</td><td><a href="#b06">06</a></td></tr>
+        <tr><td>Couldn't check, a path that isn't recorded yet</td><td><a href="#b07">07</a></td></tr>
+        <tr><td>A re-record removes a value</td><td><a href="#b09">09</a></td></tr>
+        <tr><td>Run blocked by preflight</td><td><a href="#b10">10</a></td></tr>
+        <tr><td>Stopped: not found or timed out; effect unknown; paused for help</td><td><a href="#b11">11</a></td></tr>
+        <tr><td>Read-only replay, missing frame</td><td><a href="#b12">12</a></td></tr>
+        <tr><td>CLI not installed or signed out, online data consent</td><td><a href="#b13">13</a></td></tr>
+        <tr><td>Busy, unavailable, save failed</td><td><a href="#b14">14</a></td></tr>
+      </tbody>
+    </table>
+  </details>
+</header>
+
+<!-- =================================================================
+     01 FIRST OPENING
+     ================================================================= -->
+<section class="board" id="b01" aria-labelledby="b01-t">
+  <header class="bhead">
+    <span class="bnum">01</span>
+    <p class="bstage">Stage 1 · First opening and empty library</p>
+    <h2 id="b01-t">Say what it does, then offer one button</h2>
+    <p class="bcap">The first screen explains the whole product in three steps. It says that everything works offline without an account, and that AI is something you can add later.</p>
+    <div class="blabels"><span class="lab ill">Illustrative copy</span></div>
+  </header>
+  <div class="app">
+    <div class="appbar">
+      <span class="brand"><svg class="i sm" aria-hidden="true"><use href="#i-rec"/></svg>Record to Automate</span>
+      <nav class="anav" aria-label="App"><span class="on">Library</span><span>Runs</span><span>Settings</span></nav>
+      <span class="where"><svg class="i sm" aria-hidden="true"><use href="#i-laptop"/></svg>Works on this computer · no account</span>
+    </div>
+    <div class="body split">
+      <div class="hero">
+        <p class="kicker">Welcome</p>
+        <h3 class="h-hero">Do it once.<br>Let your computer repeat it.</h3>
+        <p class="support" style="font-size:16px;line-height:24px;max-width:52ch">Record yourself using any app or game. You can check each step on its screenshot, then run it whenever you like.</p>
+        <div class="how">
+          <div><svg class="i lg" aria-hidden="true"><use href="#i-rec"/></svg><b>1 · Record</b><span>Use the app as usual. Your clicks and keys become steps.</span></div>
+          <div><svg class="i lg" aria-hidden="true"><use href="#i-target"/></svg><b>2 · Check</b><span>See exactly what each step will look for and where it clicks.</span></div>
+          <div><svg class="i lg" aria-hidden="true"><use href="#i-play"/></svg><b>3 · Run</b><span>Watch it work. Stop it at any moment.</span></div>
+        </div>
+        <div class="btnrow"><span class="btn primary big"><span class="dot" aria-hidden="true"></span>Record your first workflow</span><span class="btn big quiet">Check setup first</span></div>
+      </div>
+      <div class="stack">
+        <div class="panel stack tight">
+          <p class="h-sub">Your workflows</p>
+          <div class="wcard empty" style="min-height:170px">
+            <svg class="i xl" aria-hidden="true" style="color:var(--r2a-text-3)"><use href="#i-grid"/></svg>
+            <b style="font-size:15px">Nothing here yet</b>
+            <span class="note" style="max-width:32ch">Workflows you record are saved on this computer and appear here.</span>
+          </div>
+        </div>
+        <div class="panel stack tight">
+          <div class="row start"><svg class="i" aria-hidden="true" style="color:var(--r2a-safe)"><use href="#i-laptop"/></svg><b>Works offline</b></div>
+          <p class="note">Recording, finding things on screen, running and reviewing all happen here. No sign-up needed.</p>
+          <div class="divider"></div>
+          <div class="row start"><svg class="i" aria-hidden="true" style="color:var(--r2a-text-2)"><use href="#i-spark"/></svg><b>AI helpers are off</b><span class="st off">Optional</span></div>
+          <p class="note">You can connect your own Claude Code or Codex login later in Settings. Nothing goes online unless you choose it.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <ul class="bnotes">
+    <li><b>One primary action.</b> “Check setup first” is quieter but always available. Recording also runs the setup check if it hasn't run.</li>
+    <li>“No account” and “offline” appear twice on purpose: once in the bar, and once next to the AI note. That way the optional AI doesn't read as a requirement.</li>
+  </ul>
+</section>
+
+<!-- =================================================================
+     02 SETUP & PERMISSIONS
+     ================================================================= -->
+<section class="board" id="b02" aria-labelledby="b02-t">
+  <header class="bhead">
+    <span class="bnum">02</span>
+    <p class="bstage">Stage 2 · Setup and capture permissions</p>
+    <h2 id="b02-t">Three things the app needs, each in plain words</h2>
+    <p class="bcap">A short checklist covers seeing the screen, watching and repeating the mouse and keys, and an emergency stop that works even in fullscreen. Your desktop may show its own dialog. If access is refused, it says so plainly and offers one way forward.</p>
+    <div class="blabels"><span class="lab sys">System dialog is illustrative</span><span class="lab ill">Session names are examples</span></div>
+  </header>
+  <div class="app">
+    <div class="appbar">
+      <span class="brand"><svg class="i sm" aria-hidden="true"><use href="#i-rec"/></svg>Record to Automate</span>
+      <nav class="anav" aria-label="App"><span>Library</span><span>Runs</span><span class="on">Settings</span></nav>
+      <span class="where"><svg class="i sm" aria-hidden="true"><use href="#i-laptop"/></svg>On this computer</span>
+    </div>
+    <div class="body split">
+      <div class="panel stack">
+        <div><p class="kicker">Setup</p><h3 class="h-sec">Before your first recording</h3><p class="support">The app can only do what your desktop allows. Here's what it needs and why.</p></div>
+        <ul class="checklist">
+          <li><span class="ic" style="color:var(--r2a-safe)"><svg class="i" aria-hidden="true"><use href="#i-monitor"/></svg></span><span><b>See the window you record</b><span class="d">So steps can show screenshots and find buttons again.</span></span><span class="st ok"><svg class="i sm" aria-hidden="true"><use href="#i-check"/></svg>Allowed</span></li>
+          <li><span class="ic" style="color:var(--r2a-danger)"><svg class="i" aria-hidden="true"><use href="#i-pointer"/></svg></span><span><b>Watch and repeat your mouse and keys</b><span class="d">Your desktop said no, so nothing can be recorded yet.</span></span><span class="st bad"><svg class="i sm" aria-hidden="true"><use href="#i-x"/></svg>Turned down</span></li>
+          <li><span class="ic"><svg class="i" aria-hidden="true"><use href="#i-stop"/></svg></span><span><b>Emergency stop</b><span class="d">One key that always stops a run, even over a fullscreen game.</span></span><span class="btn small">Test the stop key</span></li>
+        </ul>
+        <div class="callout bad"><svg class="i" aria-hidden="true"><use href="#i-x"/></svg><div><b>Mouse and keyboard access was turned down</b><p>Nothing is recorded or clicked without it. You can ask again, or read how to allow it in your desktop settings.</p><div class="btnrow" style="margin-top:10px"><span class="btn small primary">Ask again</span><span class="btn small quiet">How to allow it</span></div></div></div>
+        <div class="row" style="border-top:1px solid var(--r2a-line);padding-top:14px"><span class="note">This session: <b style="color:var(--r2a-text)">Wayland</b> <span class="caption">(example; which compositor is tested first is still open)</span></span><span class="st ok"><svg class="i sm" aria-hidden="true"><use href="#i-check"/></svg>Tested setup</span></div>
+      </div>
+      <div class="stack" style="padding-top:12px">
+        <div class="sysdlg" role="img" aria-label="Illustrative desktop screen-sharing dialog">
+          <span class="syslabel">Your desktop's dialog · illustrative</span>
+          <h5>Share screen</h5>
+          <p>“Record to Automate” wants to see your screen.</p>
+          <div class="opts"><span class="opt on"><i></i>Last Z window</span><span class="opt"><i></i>Entire screen</span></div>
+          <div class="sb"><span>Cancel</span><span class="p">Share</span></div>
+        </div>
+        <p class="note">On some desktops this dialog comes from the system, not the app. Its wording and layout vary. The app explains it beforehand so it isn't a surprise.</p>
+      </div>
+    </div>
+  </div>
+  <p class="statecap">Same checklist in three situations</p>
+  <div class="minirow dark">
+    <div class="ministate"><span class="st ok"><svg class="i sm" aria-hidden="true"><use href="#i-check"/></svg>Ready</span><b>All set: you can record</b><p class="note">Screen, mouse and keys, and the stop key all checked. Example: the current machine, GNOME on X11.</p><span class="btn small primary"><span class="dot" aria-hidden="true"></span>New recording</span></div>
+    <div class="ministate"><span class="st warn"><svg class="i sm" aria-hidden="true"><use href="#i-lock"/></svg>Needs your OK</span><b>Your desktop will ask once</b><p class="note">On Wayland a system dialog asks for screen and input access. Choose the game window when it does.</p><span class="btn small">Continue</span></div>
+    <div class="ministate"><span class="st unk"><svg class="i sm" aria-hidden="true"><use href="#i-q"/></svg>Not tested yet</span><b>This desktop isn't supported yet</b><p class="note">Recording might not work on this session. Settings shows which setups have been tested.</p><span class="btn small quiet">See tested setups</span></div>
+  </div>
+  <ul class="bnotes">
+    <li><b>X11 and Wayland are shown as tested setups, not promises.</b> Which Wayland compositor gets tested first is still open, so no names appear.</li>
+    <li>The stop key is tested during setup. Its actual key combination is still undecided, so the board shows a button instead of a key.</li>
+  </ul>
+</section>
+
+<!-- =================================================================
+     03 NEW RECORDING
+     ================================================================= -->
+<section class="board" id="b03" aria-labelledby="b03-t">
+  <header class="bhead">
+    <span class="bnum">03</span>
+    <p class="bstage">Stage 3 · New recording</p>
+    <h2 id="b03-t">Pick the window, choose how it starts, see what's captured</h2>
+    <p class="bcap">A three-part sheet. The real Last Z frame is the window preview. Launching from Steam is optional and waits for the game to look ready. A small panel says what is and isn't recorded.</p>
+    <div class="blabels"><span class="lab real">Window preview is the real frame</span><span class="lab ex">Countdown, timings</span></div>
+  </header>
+  <div class="app">
+    <div class="appbar">
+      <span class="brand"><svg class="i sm" aria-hidden="true"><use href="#i-rec"/></svg>Record to Automate</span>
+      <nav class="anav" aria-label="App"><span class="on">Library</span><span>Runs</span><span>Settings</span></nav>
+      <span class="where"><svg class="i sm" aria-hidden="true"><use href="#i-laptop"/></svg>On this computer</span>
+    </div>
+    <div class="body split">
+      <div class="sheet">
+        <div class="row"><h3 class="h-sec" style="margin:0">New recording</h3><span class="btn small quiet">Cancel</span></div>
+        <div class="stack tight">
+          <p class="h-sub"><span class="stepn">1</span>What do you want to record?</p>
+          <div class="win on"><div class="wt"><div class="crop c-full"><img src="/home/ian/record-to-automate/planning/mockups/assets/last-z-reference.png" alt="Real Last Z window preview"></div></div><div><b>Last Z</b><span>Open window · running through Steam</span></div><span class="st ok"><svg class="i sm" aria-hidden="true"><use href="#i-check"/></svg>Visible</span></div>
+          <div class="win"><div class="wt ph"><svg class="i lg" aria-hidden="true"><use href="#i-monitor"/></svg></div><div><b>Google Chrome</b><span>Open window · illustrative</span></div><span class="st off">Minimised</span></div>
+        </div>
+        <div class="stack tight">
+          <p class="h-sub"><span class="stepn">2</span>How should it start?</p>
+          <div class="choice on"><i class="rb"></i><b>Use the window that's already open</b><span>Recording begins on the Last Z window you picked.</span></div>
+          <div class="choice"><i class="rb"></i><b>Launch from Steam first</b><span>Starts the game, then waits until the screen looks ready. A finished launch doesn't mean the game is ready.</span></div>
+        </div>
+        <div class="row">
+          <span class="note">Starts after a short countdown <span class="caption">(3 s, example)</span>. The small recording bar stays out of the game's way.</span>
+          <span class="btn primary big"><span class="dot" aria-hidden="true"></span>Start recording</span>
+        </div>
+      </div>
+      <div class="stack">
+        <div class="panel stack tight">
+          <p class="h-sub"><span class="stepn">3</span>What gets recorded</p>
+          <ul class="sendlist">
+            <li><svg class="i sm" aria-hidden="true" style="color:var(--r2a-safe)"><use href="#i-check"/></svg>The Last Z window, as video</li>
+            <li><svg class="i sm" aria-hidden="true" style="color:var(--r2a-safe)"><use href="#i-check"/></svg>Your clicks and keys inside it</li>
+            <li class="n"><svg class="i sm" aria-hidden="true"><use href="#i-x"/></svg>Other windows and notifications</li>
+            <li class="n"><svg class="i sm" aria-hidden="true"><use href="#i-x"/></svg>Anything you type into this app</li>
+          </ul>
+          <p class="note">Everything stays on this computer.</p>
+        </div>
+        <div class="ministate">
+          <span class="st warn"><svg class="i sm" aria-hidden="true"><use href="#i-alert"/></svg>Window minimised</span>
+          <b>Chrome is minimised</b>
+          <p class="note">It needs to be on screen to record. Bring it to the front, then choose it again.</p>
+          <span class="btn small">Show the window</span>
+        </div>
+        <div class="ministate">
+          <span class="st info"><svg class="i sm" aria-hidden="true"><use href="#i-hourglass"/></svg>Waiting for the game</span>
+          <b>Launched from Steam. Waiting until it looks ready</b>
+          <p class="note">Checking for the main screen <span class="timer">0:42</span> <span class="caption">(example)</span>. Recording starts when it's seen, or you can start now.</p>
+          <div class="btnrow"><span class="btn small">Start now</span><span class="btn small quiet">Cancel</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <ul class="bnotes">
+    <li><b>Steam launch and “ready” are separate.</b> The waiting state says what it's looking for. It never assumes a finished launch means the game is ready.</li>
+    <li>Window list entries show only facts the app can observe, like visible or minimised. They don't guess what's inside the window.</li>
+  </ul>
+</section>
+
+<!-- =================================================================
+     04 RECORDING HUD
+     ================================================================= -->
+<section class="board" id="b04" aria-labelledby="b04-t">
+  <header class="bhead">
+    <span class="bnum">04</span>
+    <p class="bstage">Stage 4 · Recording</p>
+    <h2 id="b04-t">A small bar in empty sky, away from the game's buttons</h2>
+    <p class="bcap">While you record, the app shrinks to a single pill. It sits in the empty top band of the real frame, clear of the resources at the top left, the side buttons and the chat. Its states use both words and shape: a red dot, an amber square and a tick.</p>
+    <div class="blabels"><span class="lab real">Real screenshot</span><span class="lab ill">HUD placement and click marker</span></div>
+  </header>
+  <div class="app">
+    <div class="body" style="padding:16px">
+      <div class="crop c-full" role="img" aria-label="Real Last Z frame with the recording bar placed in the empty top band">
+        <img src="/home/ian/record-to-automate/planning/mockups/assets/last-z-reference.png" alt="">
+        <span class="fr-badge">Real screenshot</span>
+        <div class="hud hud-on-shot"><span class="rd" aria-hidden="true"></span><b>Recording</b><span class="t">0:18</span><span class="sep opt"></span><span class="opt">7 steps</span><span class="hb opt"><svg class="i sm fill" aria-hidden="true"><use href="#i-pause"/></svg>Pause</span><span class="hb stop"><svg class="i sm fill" aria-hidden="true"><use href="#i-stop"/></svg>Stop</span></div>
+        <i class="ov click" style="left:97.85%;top:82.3%"></i>
+        <span class="ov tag right" style="left:96%;top:79.6%">Recorded: click 7</span>
+      </div>
+    </div>
+  </div>
+  <p class="statecap">The bar in its three states</p>
+  <div class="minirow dark">
+    <div class="ministate"><div><span class="hud"><span class="rd" aria-hidden="true"></span><b>Recording</b><span class="t">0:18</span><span class="hb stop"><svg class="i sm fill" aria-hidden="true"><use href="#i-stop"/></svg>Stop</span></span></div><p class="note">Red dot and a running timer. Every click and key in the game window becomes a step.</p></div>
+    <div class="ministate"><div><span class="hud"><span class="pz" aria-hidden="true"></span><b>Paused</b><span class="t">0:31</span><span class="hb">Resume</span></span></div><p class="note">Amber square. Nothing you do is recorded, so you can get the game ready or read something.</p></div>
+    <div class="ministate"><div><span class="hud" style="padding-right:14px"><svg class="i sm" aria-hidden="true" style="color:var(--r2a-safe)"><use href="#i-check"/></svg><b>Stopped</b><span>saving 0:46…</span></span></div><p class="note">The bar turns into a saving note. The editor opens on its own when saving is done (board 05).</p></div>
+  </div>
+  <ul class="bnotes">
+    <li><b>Emergency stop</b> has its own key, checked in setup, and doesn't depend on the bar. The key itself isn't decided, so none is printed.</li>
+    <li>You can drag the bar somewhere else. The default spot is chosen to avoid the edges, where games usually put their controls.</li>
+  </ul>
+</section>
+
+<!-- =================================================================
+     05 AFTER RECORDING
+     ================================================================= -->
+<section class="board" id="b05" aria-labelledby="b05-t">
+  <header class="bhead">
+    <span class="bnum">05</span>
+    <p class="bstage">Stage 5 · After recording</p>
+    <h2 id="b05-t">A short wait, then a readable list with two items flagged</h2>
+    <p class="bcap">The app shows what it's doing while it turns video into steps, and you can start looking early. The first review is a numbered list in plain words. The recording strip and the selected frame sit beside it, and one banner says how many steps need a look.</p>
+    <div class="blabels"><span class="lab real">Frame for step 3 is real</span><span class="lab ill">Workflow steps, durations</span></div>
+  </header>
+  <div class="app">
+    <div class="appbar">
+      <span class="brand"><svg class="i sm" aria-hidden="true"><use href="#i-rec"/></svg>Record to Automate</span>
+      <nav class="anav" aria-label="App"><span class="on">Library</span><span>Runs</span><span>Settings</span></nav>
+      <span class="where"><svg class="i sm" aria-hidden="true"><use href="#i-laptop"/></svg>On this computer</span>
+    </div>
+    <header class="top">
+      <div class="ttl"><h3>New recording</h3><p><span>Last Z · 0:46 · just now</span><span class="st ok" style="padding:1px 8px"><svg class="i sm" aria-hidden="true"><use href="#i-check"/></svg>Saved</span></p></div>
+      <div class="acts"><span class="btn quiet small">Rename</span><span class="btn"><span class="dot" aria-hidden="true"></span>Record again</span><span class="btn primary dis"><svg class="i sm fill" aria-hidden="true"><use href="#i-play"/></svg>Run</span></div>
+    </header>
+    <div class="tabs"><span class="on"><svg class="i sm" aria-hidden="true"><use href="#i-target"/></svg>Actions</span><span><svg class="i sm" aria-hidden="true"><use href="#i-flow"/></svg>Flow</span><span><svg class="i sm" aria-hidden="true"><use href="#i-list"/></svg>Values</span></div>
+    <div class="body split-l">
+      <div class="stack">
+        <div class="callout"><svg class="i" aria-hidden="true"><use href="#i-alert"/></svg><div><b>8 steps found · 2 need a look</b><p>Run stays off until they're checked. Start with step 1.</p></div></div>
+        <ol class="alist" aria-label="Recorded steps">
+          <li class="aitem"><span class="num">1</span><span class="tx"><b>Wait until the game looks ready</b><span><svg class="i sm" aria-hidden="true"><use href="#i-wait"/></svg>Check · what to look for isn't set</span></span><span class="st warn"><svg class="i sm" aria-hidden="true"><use href="#i-alert"/></svg>Look</span></li>
+          <li class="aitem"><span class="num">2</span><span class="tx"><b>Click “×” on the popup</b><span><svg class="i sm" aria-hidden="true"><use href="#i-image"/></svg>Picture</span></span><span class="st ok"><svg class="i sm" aria-hidden="true"><use href="#i-check"/></svg>Ready</span></li>
+          <li class="aitem on"><span class="num">3</span><span class="tx"><b>Click “Mail”</b><span><svg class="i sm" aria-hidden="true"><use href="#i-image"/></svg>Picture · 0:09</span></span><span class="st ok"><svg class="i sm" aria-hidden="true"><use href="#i-check"/></svg>Ready</span></li>
+          <li class="aitem"><span class="num">4</span><span class="tx"><b>Read the unread count</b><span><svg class="i sm" aria-hidden="true"><use href="#i-text"/></svg>Text · no number seen yet</span></span><span class="st warn"><svg class="i sm" aria-hidden="true"><use href="#i-alert"/></svg>Look</span></li>
+          <li class="aitem"><span class="num">5</span><span class="tx"><b>Click “Collect all”</b><span><svg class="i sm" aria-hidden="true"><use href="#i-text"/></svg>Text</span></span><span class="st ok"><svg class="i sm" aria-hidden="true"><use href="#i-check"/></svg>Ready</span></li>
+          <li class="aitem"><span class="num">6</span><span class="tx"><b>Click “Close”</b><span><svg class="i sm" aria-hidden="true"><use href="#i-image"/></svg>Picture</span></span><span class="st info"><svg class="i sm" aria-hidden="true"><use href="#i-hourglass"/></svg>Preparing</span></li>
+          <li class="aitem"><span class="num">7</span><span class="tx"><b>Press Esc</b><span><svg class="i sm" aria-hidden="true"><use href="#i-keyboard"/></svg>Key</span></span><span class="st ok"><svg class="i sm" aria-hidden="true"><use href="#i-check"/></svg>Ready</span></li>
+        </ol>
+        <p class="caption" style="margin:0">+1 more · steps are illustrative</p>
+      </div>
+      <div class="stack">
+        <div class="panel">
+          <div class="row" style="margin-bottom:12px"><p class="kicker">Step 3 · frame just before the click · 0:09</p><div class="seg" role="group" aria-label="Zoom"><span>Close-up</span><span class="on">Whole frame</span></div></div>
+          <div class="crop c-full" role="img" aria-label="Real Last Z frame with the Mail button outlined">
+            <img src="/home/ian/record-to-automate/planning/mockups/assets/last-z-reference.png" alt="">
+            <span class="fr-badge">Real screenshot</span>
+            <i class="ov target" style="left:96.5%;top:79.82%;width:3%;height:5.69%"></i>
+            <i class="ov click" style="left:97.85%;top:82.3%"></i>
+            <span class="ov tag right" style="left:96.3%;top:79.4%">Mail · where you clicked</span>
+          </div>
+          <div class="strip" aria-label="Recording strip with 8 step markers">
+            <div class="bar"><span class="played" style="width:20%"></span></div>
+            <span class="mk w" style="left:3%"><b>1</b></span><span class="mk" style="left:12%"><b>2</b></span><span class="mk on" style="left:20%"><b>3</b></span><span class="mk w" style="left:36%"><b>4</b></span><span class="mk" style="left:52%"><b>5</b></span><span class="mk" style="left:67%"><b>6</b></span><span class="mk" style="left:80%"><b>7</b></span><span class="mk" style="left:94%"><b>8</b></span>
+            <div class="ticks" style="margin-top:38px"><span>0:00</span><span>0:23</span><span>0:46</span></div>
+          </div>
+        </div>
+        <div class="row"><span class="note">Next: tell step 1 what “ready” looks like.</span><span class="btn primary">Fix step 1</span></div>
+      </div>
+    </div>
+  </div>
+  <p class="statecap">Just after Stop: processing</p>
+  <div class="app"><div class="body two">
+    <div class="panel stack tight">
+      <div class="row start"><span class="bigicon ok" style="width:44px;height:44px;border-radius:12px"><svg class="i lg" aria-hidden="true"><use href="#i-film"/></svg></span><div><p class="h-sub">Turning your recording into steps</p><p class="note">Usually a short wait. You can start reading as steps appear.</p></div></div>
+      <ul class="sendlist">
+        <li><svg class="i sm" aria-hidden="true" style="color:var(--r2a-safe)"><use href="#i-check"/></svg>Saved the recording (0:46)</li>
+        <li><svg class="i sm" aria-hidden="true" style="color:var(--r2a-safe)"><use href="#i-check"/></svg>Found 7 clicks and 1 key press</li>
+        <li><svg class="i sm" aria-hidden="true" style="color:var(--r2a-accent)"><use href="#i-hourglass"/></svg>Cutting a target picture for each click · 5 of 7</li>
+        <li class="n"><svg class="i sm" aria-hidden="true"><use href="#i-clock"/></svg>Checking each picture is unique on its own frame</li>
+      </ul>
+      <div class="range" aria-hidden="true"><i style="width:68%"></i></div>
+      <div class="btnrow"><span class="btn small">Start looking</span></div>
+    </div>
+    <div class="panel stack tight">
+      <p class="h-sub">If there's nothing to turn into steps</p>
+      <div class="callout plain"><svg class="i" aria-hidden="true"><use href="#i-q"/></svg><div><b>No clicks or keys were recorded</b><p>The video was kept, but nothing happened inside the Last Z window. Was it the window in front?</p><div class="btnrow" style="margin-top:10px"><span class="btn small primary"><span class="dot" aria-hidden="true"></span>Record again</span><span class="btn small quiet">Delete recording</span></div></div></div>
+    </div>
+  </div></div>
+  <ul class="bnotes">
+    <li><b>Run stays off until flagged steps are checked.</b> The reason is right next to the greyed button, so nobody has to guess.</li>
+    <li>Only step 3 has a frame here because only one real screenshot exists. In the app, every step shows its own frame.</li>
+  </ul>
+</section>
+
+<!-- =================================================================
+     06 EDIT AN ACTION
+     ================================================================= -->
+<section class="board" id="b06" aria-labelledby="b06-t">
+  <header class="bhead">
+    <span class="bnum">06</span>
+    <p class="bstage">Stage 6 · Edit an action</p>
+    <h2 id="b06-t">The screenshot is the editor, and the sentence explains it</h2>
+    <p class="bcap">This is the approved action editor with one addition: a sentence whose coloured words match the three marks. The target is what to find, the search area is where to look, and the safe area is where a click may land. Preview only draws marks; it never clicks. Below are the three possible answers.</p>
+    <div class="blabels"><span class="lab real">Real screenshot, CSS crop</span><span class="lab ill">Bounds drawn by eye</span><span class="lab ex">Margin 20%</span></div>
+  </header>
+  <div class="app">
+    <header class="top">
+      <div class="ttl"><h3>Startup routine</h3><p><span>Last Z · saved 2 min ago</span></p></div>
+      <div class="acts"><span class="where"><svg class="i sm" aria-hidden="true"><use href="#i-laptop"/></svg>Runs on this computer</span><span class="btn quiet small"><svg class="i sm" aria-hidden="true"><use href="#i-spark"/></svg>Assist: off</span><span class="btn"><span class="dot" aria-hidden="true"></span>Record</span><span class="btn primary"><svg class="i sm fill" aria-hidden="true"><use href="#i-play"/></svg>Run</span></div>
+    </header>
+    <div class="tabs"><span class="on"><svg class="i sm" aria-hidden="true"><use href="#i-target"/></svg>Actions</span><span><svg class="i sm" aria-hidden="true"><use href="#i-flow"/></svg>Flow</span><span><svg class="i sm" aria-hidden="true"><use href="#i-list"/></svg>Values</span></div>
+    <div class="body split">
+      <section class="panel" aria-label="Recorded frame">
+        <div class="row" style="margin-bottom:12px"><p class="kicker">Open mail · step 1 of 3 · frame at 0:09</p><div class="seg" role="group" aria-label="Zoom"><span class="on">Close-up</span><span>Whole frame</span></div></div>
+        <div class="crop c-mail" role="img" aria-label="Close-up of the real screenshot around Mail, with search area, target, safe area, avoided badge and sample points">
+          <img src="/home/ian/record-to-automate/planning/mockups/assets/last-z-reference.png" alt="">
+          <span class="fr-badge">Real screenshot · close-up</span>
+          <i class="ov search" style="left:63.33%;top:9.6%;width:35.33%;height:76.8%"></i>
+          <span class="ov tag below" style="left:63.33%;top:86.4%">Search area</span>
+          <i class="ov target" style="left:76.67%;top:30.93%;width:20%;height:34.13%"></i>
+          <span class="ov tag" style="left:63.9%;top:30.93%;transform:translate(-100%,0)">Mail (target)</span>
+          <i class="ov safe" style="left:80.67%;top:38.93%;width:12%;height:19.04%"></i>
+          <i class="ov excl" style="left:90.67%;top:29.33%;width:6%;height:9.6%"></i>
+          <i class="ov pt" style="left:82.6%;top:42%"></i><i class="ov pt" style="left:88.4%;top:41.2%"></i><i class="ov pt" style="left:84.6%;top:48.5%"></i><i class="ov pt" style="left:90.8%;top:47.4%"></i><i class="ov pt" style="left:82.4%;top:54.8%"></i><i class="ov pt" style="left:87.7%;top:55.6%"></i>
+        </div>
+        <div class="legend">
+          <span><i class="sw target"></i><span><b>Target</b>: what to find. Here, the picture of the Mail button.</span></span>
+          <span><i class="sw search"></i><span><b>Search area</b>: where to look for it. A smaller area finds it faster and more reliably.</span></span>
+          <span><i class="sw safe"></i><span><b>Safe click area</b>: where a click is allowed to land, away from the edges.</span></span>
+          <span><i class="sw excl"></i><span><b>Skipped</b>: the red badge corner is never clicked.</span></span>
+          <span><i class="sw pt"></i><span><b>Preview points</b>: where clicks could land. Drawn only; nothing is clicked.</span></span>
+        </div>
+      </section>
+      <aside class="panel stack" aria-label="Selected action">
+        <div><p class="kicker">Step 3 · Click</p><h3 class="h-sec">Click “Mail”</h3></div>
+        <p class="sentence">Find <span class="m t">the Mail button</span> inside <span class="m s">the bottom-right corner</span>, then click anywhere in <span class="m g">the green area</span>.</p>
+        <div class="stack tight">
+          <p class="h-sub">Find it by</p>
+          <div class="seg wide" role="group" aria-label="Find it by"><span><svg class="i sm" aria-hidden="true"><use href="#i-cross"/></svg>Fixed spot</span><span class="on"><svg class="i sm" aria-hidden="true"><use href="#i-image"/></svg>Picture</span><span><svg class="i sm" aria-hidden="true"><use href="#i-text"/></svg>Text</span></div>
+          <p class="note">Picture: looks for the button's image, cut from your recording, even if it has moved.</p>
+        </div>
+        <div class="stack tight">
+          <p class="h-sub">Where to click</p>
+          <div class="choice"><i class="rb"></i><b>Same point every time</b><span>The spot you clicked when recording</span></div>
+          <div class="choice on"><i class="rb"></i><b>Vary inside the safe area</b><span>A different point each run. Only the position changes; timing is never randomised.</span></div>
+          <div class="field"><span class="lab2">Keep away from the edges <span class="note" style="display:inline">20% <span class="caption">(example)</span></span></span><div class="range" aria-hidden="true"><i style="width:50%"></i><b style="left:50%"></b></div></div>
+        </div>
+        <div class="btnrow"><span class="btn primary"><svg class="i sm" aria-hidden="true"><use href="#i-eye"/></svg>Preview on this screenshot</span><span class="btn quiet">Reset</span></div>
+        <p class="note">Preview draws where clicks could land. Nothing is clicked.</p>
+        <div class="collapsed"><svg class="i sm" aria-hidden="true"><use href="#i-chev"/></svg>How it decides<span class="hint">Advanced</span></div>
+      </aside>
+    </div>
+  </div>
+  <p class="statecap">The three answers a preview can give: words and icon, never a score</p>
+  <div class="minirow shots dark">
+    <div class="ministate">
+      <div class="crop c-mail" role="img" aria-label="Real close-up: Mail found once">
+        <img src="/home/ian/record-to-automate/planning/mockups/assets/last-z-reference.png" alt="">
+        <span class="fr-badge">Real screenshot</span>
+        <i class="ov search" style="left:63.33%;top:9.6%;width:35.33%;height:76.8%"></i>
+        <i class="ov target" style="left:76.67%;top:30.93%;width:20%;height:34.13%"></i>
+        <i class="ov safe" style="left:80.67%;top:38.93%;width:12%;height:19.04%"></i>
+      </div>
+      <span class="st ok"><svg class="i sm" aria-hidden="true"><use href="#i-check"/></svg>Found one</span>
+      <p class="note">Exactly one Mail button in the search area, so this step can click inside the green area.</p>
+    </div>
+    <div class="ministate">
+      <div class="crop c-exp" role="img" aria-label="Real screenshot region with four EXP bubbles marked 1 to 4">
+        <img src="/home/ian/record-to-automate/planning/mockups/assets/last-z-reference.png" alt="">
+        <span class="fr-badge">Real · marks by eye</span>
+        <i class="ov cand" data-n="1" style="left:22.5%;top:14.29%;width:9.5%;height:10.7%"></i>
+        <i class="ov cand" data-n="2" style="left:43.75%;top:33.93%;width:9.5%;height:10.7%"></i>
+        <i class="ov cand" data-n="3" style="left:65.5%;top:53.57%;width:9.5%;height:10.7%"></i>
+        <i class="ov cand" data-n="4" style="left:38%;top:81.43%;width:9.5%;height:10.7%"></i>
+      </div>
+      <span class="st warn"><svg class="i sm" aria-hidden="true"><use href="#i-alert"/></svg>More than one · 4 places</span>
+      <p class="note">If the target were the text “EXP”, it would appear 4 times, so nothing is clicked. Make the search area smaller or choose a different target.</p>
+    </div>
+    <div class="ministate">
+      <div class="crop c-mail" role="img" aria-label="Real close-up with a search area misplaced over empty ground">
+        <img src="/home/ian/record-to-automate/planning/mockups/assets/last-z-reference.png" alt="">
+        <span class="fr-badge">Real screenshot</span>
+        <i class="ov dim" style="left:0;top:0;width:100%;height:100%"></i>
+        <i class="ov search" style="left:4%;top:12%;width:40%;height:46%"></i>
+        <span class="ov tag below" style="left:4%;top:58%">Search area</span>
+      </div>
+      <span class="st bad"><svg class="i sm" aria-hidden="true"><use href="#i-x"/></svg>Not found</span>
+      <p class="note">Mail isn't inside this search area. Nothing would be clicked. Move the area, or re-capture the target.</p>
+    </div>
+  </div>
+  <ul class="bnotes">
+    <li><b>No percentages or scores appear.</b> How well recognition works on this game hasn't been measured yet. The “More than one” marks are drawn by eye on real pixels, not taken from a detector.</li>
+    <li>A fixed spot has no target outline. It shows only the recorded point and, if you draw one, a safe area. A fixed spot is never a silent fallback for a picture or text target.</li>
+    <li>Jev (online, experimental) appears as a fourth “Find it by” option only after it's enabled in Settings (board 13).</li>
+  </ul>
+</section>
+
+<!-- =================================================================
+     07 FLOW
+     ================================================================= -->
+<section class="board" id="b07" aria-labelledby="b07-t">
+  <header class="bhead">
+    <span class="bnum">07</span>
+    <p class="bstage">Stage 7 · Flow</p>
+    <h2 id="b07-t">A checklist that branches, read from top to bottom</h2>
+    <p class="bcap">The flow is a vertical list of recorded sections and checks, not a canvas. Each check has three lanes: Yes, No and Couldn't check. A path that hasn't been recorded yet is drawn dashed and empty, so it never looks like it has a video.</p>
+    <div class="blabels"><span class="lab ill">Workflow sections and checks</span><span class="lab ex">Timing 5 s</span></div>
+  </header>
+  <div class="app">
+    <header class="top">
+      <div class="ttl"><h3>Startup routine</h3><p><span>Last Z · saved 2 min ago</span></p></div>
+      <div class="acts"><span class="btn"><span class="dot" aria-hidden="true"></span>Record</span><span class="btn primary"><svg class="i sm fill" aria-hidden="true"><use href="#i-play"/></svg>Run</span></div>
+    </header>
+    <div class="tabs"><span><svg class="i sm" aria-hidden="true"><use href="#i-target"/></svg>Actions</span><span class="on"><svg class="i sm" aria-hidden="true"><use href="#i-flow"/></svg>Flow</span><span><svg class="i sm" aria-hidden="true"><use href="#i-list"/></svg>Values</span></div>
+    <div class="body split">
+      <section class="panel" aria-label="Workflow flow">
+        <div class="row" style="margin-bottom:18px"><div><p class="kicker">Runs top to bottom</p><h4 class="h-sec">Flow</h4></div><span class="note" style="max-width:40ch">Order comes from this list, not from when things were recorded.</span></div>
+        <ol class="flow">
+          <li><div class="fn"><span class="ico"><svg class="i" aria-hidden="true"><use href="#i-start"/></svg></span><span class="card"><b>Start</b><span>Use the open Last Z window</span></span></div></li>
+          <li><div class="fn"><span class="ico"><svg class="i" aria-hidden="true"><use href="#i-wait"/></svg></span><span class="card"><b>Wait until the game looks ready</b><span>Checks the screen, up to 3 min <span class="caption">(example)</span></span></span></div></li>
+          <li><div class="fn if on"><span class="ico"><svg class="i" aria-hidden="true"><use href="#i-branch"/></svg></span><span class="card"><b>Is a popup showing?</b><span>Looks for the popup's “×”</span></span></div>
+            <div class="lanes">
+              <div class="lane"><span class="ll yes"><svg class="i sm" aria-hidden="true"><use href="#i-check"/></svg>Yes</span><span class="lt"><svg class="i sm" aria-hidden="true"><use href="#i-rec"/></svg>Dismiss popup</span><span class="ld">1 step · recorded 0:01–0:03</span></div>
+              <div class="lane"><span class="ll no"><svg class="i sm" aria-hidden="true"><use href="#i-arrow"/></svg>No</span><span class="lt" style="font-weight:500">Continue</span><span class="ld">Goes straight to Open mail</span></div>
+              <div class="lane stopl"><span class="ll unk"><svg class="i sm" aria-hidden="true"><use href="#i-q"/></svg>Couldn't check</span><span class="lt" style="font-weight:500">Stop and explain</span><span class="ld">Default. Not the same as No.</span></div>
+            </div></li>
+          <li><div class="fn rec"><span class="ico"><svg class="i" aria-hidden="true"><use href="#i-rec"/></svg></span><span class="card"><b>Open mail</b><span>3 steps · recorded 0:07–0:14 · makes <span class="mono">unread_count</span></span></span></div></li>
+          <li><div class="fn if"><span class="ico"><svg class="i" aria-hidden="true"><use href="#i-branch"/></svg></span><span class="card"><b>Is there unread mail?</b><span>Uses <span class="mono">unread_count</span> &gt; 0</span></span></div>
+            <div class="lanes">
+              <div class="lane"><span class="ll yes"><svg class="i sm" aria-hidden="true"><use href="#i-check"/></svg>Yes</span><span class="lt"><svg class="i sm" aria-hidden="true"><use href="#i-rec"/></svg>Collect all</span><span class="ld">2 steps · recorded 0:15–0:22</span></div>
+              <div class="lane unrec"><span class="ll no"><svg class="i sm" aria-hidden="true"><use href="#i-arrow"/></svg>No</span><span class="lt" style="font-weight:500;color:var(--r2a-text-2)">Close mail</span><span class="ld">Not recorded yet. No video for this path.</span><span class="btn small" style="justify-self:start"><span class="dot" aria-hidden="true"></span>Record this path</span></div>
+              <div class="lane stopl"><span class="ll unk"><svg class="i sm" aria-hidden="true"><use href="#i-q"/></svg>Couldn't check</span><span class="lt" style="font-weight:500">Stop and explain</span><span class="ld">Default</span></div>
+            </div></li>
+          <li><div class="fn"><span class="ico"><svg class="i" aria-hidden="true"><use href="#i-end"/></svg></span><span class="card"><b>End</b><span>Workflow finishes</span></span></div></li>
+        </ol>
+      </section>
+      <aside class="panel stack" aria-label="Selected check">
+        <div><p class="kicker">Check</p><h3 class="h-sec">Is a popup showing?</h3><p class="support">Looks at the screen once, then picks a lane.</p></div>
+        <div class="stack tight"><p class="h-sub">Look for</p>
+          <div class="seg wide" role="group" aria-label="Look for"><span class="on"><svg class="i sm" aria-hidden="true"><use href="#i-image"/></svg>Picture</span><span><svg class="i sm" aria-hidden="true"><use href="#i-text"/></svg>Text</span><span><svg class="i sm" aria-hidden="true"><use href="#i-list"/></svg>Value</span></div>
+          <p class="note">The popup's “×” button, from step 2's frame.</p>
+        </div>
+        <div class="stack tight"><p class="h-sub">What each answer means</p>
+          <dl class="facts" style="font-size:14px;line-height:20px;gap:10px 14px">
+            <dt><span class="st ok"><svg class="i sm" aria-hidden="true"><use href="#i-check"/></svg>Yes</span></dt><dd>The “×” was found once.</dd>
+            <dt><span class="st off"><svg class="i sm" aria-hidden="true"><use href="#i-arrow"/></svg>No</span></dt><dd>The screen was read clearly and there's no “×”.</dd>
+            <dt><span class="st warn"><svg class="i sm" aria-hidden="true"><use href="#i-q"/></svg>Couldn't check</span></dt><dd>The screen couldn't be read, or more than one “×” was found.</dd>
+          </dl>
+        </div>
+        <div class="callout"><svg class="i" aria-hidden="true"><use href="#i-alert"/></svg><div><b>Couldn't check is not No</b><p>By default the run stops and explains. You can choose to pause for help instead.</p></div></div>
+        <div class="collapsed"><svg class="i sm" aria-hidden="true"><use href="#i-chev"/></svg>Timing and details<span class="hint">checks for 5 s · example</span></div>
+      </aside>
+    </div>
+  </div>
+  <ul class="bnotes">
+    <li><b>Sections keep their recording times</b> as a reference only. The run order is the list.</li>
+    <li>“Record this path” starts a new recording for that lane alone. Until then, a run that reaches it stops and explains instead of guessing.</li>
+    <li>Loops and calling other workflows aren't shown. They're still open choices.</li>
+  </ul>
+</section>
+
+<!-- =================================================================
+     08 VALUES & OUTPUTS
+     ================================================================= -->
+<section class="board" id="b08" aria-labelledby="b08-t">
+  <header class="bhead">
+    <span class="bnum">08</span>
+    <p class="bstage">Stage 8 · Values and outputs</p>
+    <h2 id="b08-t">Every value shows where it comes from and what uses it</h2>
+    <p class="bcap">A value is something read from the screen while running. A row of three boxes shows it: made by, the value, used by. Saving results to files is shown as an undecided proposal, with its options labelled.</p>
+    <div class="blabels"><span class="lab ill">Mail panel and values</span><span class="lab prop">Scope and file modes</span><span class="lab ex">Folder path</span></div>
+  </header>
+  <div class="app">
+    <header class="top">
+      <div class="ttl"><h3>Startup routine</h3><p><span>Last Z · saved 2 min ago</span></p></div>
+      <div class="acts"><span class="btn"><span class="dot" aria-hidden="true"></span>Record</span><span class="btn primary"><svg class="i sm fill" aria-hidden="true"><use href="#i-play"/></svg>Run</span></div>
+    </header>
+    <div class="tabs"><span><svg class="i sm" aria-hidden="true"><use href="#i-target"/></svg>Actions</span><span><svg class="i sm" aria-hidden="true"><use href="#i-flow"/></svg>Flow</span><span class="on"><svg class="i sm" aria-hidden="true"><use href="#i-list"/></svg>Values</span></div>
+    <div class="body split-l">
+      <div class="stack">
+        <div><p class="kicker">Read from the screen while running</p><h4 class="h-sec">Values</h4></div>
+        <div class="vitem on"><div class="vn"><b>unread_count</b><span class="st off">Number</span></div><p>Made by Open mail, step 2 · used by “Is there unread mail?”</p></div>
+        <div class="vitem"><div class="vn"><b>collected</b><span class="st off">Text</span></div><p>Only exists on the Yes path of “Is there unread mail?” · saved to a file</p></div>
+        <div class="vitem"><div class="vn"><b>mail_screenshot</b><span class="st off">Picture</span></div><p>Made by Open mail, step 3 · saved to a file</p></div>
+        <div class="vitem" style="background:transparent;border:1px dashed var(--r2a-line-strong)"><div class="vn"><span class="st warn"><svg class="i sm" aria-hidden="true"><use href="#i-alert"/></svg>No source</span></div><p>If a value loses its source (board 09), it shows here with a fix.</p></div>
+      </div>
+      <div class="stack">
+        <section class="panel stack" aria-label="Selected value">
+          <div class="row"><div><p class="kicker">Value · Number</p><h3 class="h-sec mono" style="font-size:20px">unread_count</h3></div><span class="note">Last seen when recording: <b style="color:var(--r2a-text)">3</b> <span class="caption">(example)</span></span></div>
+          <div class="vflow">
+            <div class="vbox"><span>Made by</span><b>Open mail · step 2</b><span>Read the unread count</span></div>
+            <svg class="i arrow" aria-hidden="true"><use href="#i-arrow"/></svg>
+            <div class="vbox val"><span>Turns “Unread 3” into</span><b class="mono">3</b></div>
+            <svg class="i arrow" aria-hidden="true"><use href="#i-arrow"/></svg>
+            <div class="vbox"><span>Used by</span><b>Is there unread mail?</b><span>Yes if more than 0</span></div>
+          </div>
+          <div class="pairs">
+            <div><h5><svg class="i sm" aria-hidden="true"><use href="#i-search"/></svg>Where it reads</h5>
+              <div class="illus" role="img" aria-label="Illustrative mail panel, not a real screenshot"><span class="fr-badge ill">Illustrative · not a real game screen</span>
+                <div class="wf"><div class="t">Mail <i></i></div><div class="r hl">Unread 3</div><div class="r">System · Reward</div><div class="r">Alliance · Notice</div><div class="b">Collect all</div></div>
+              </div></div>
+            <div class="stack tight"><h5><svg class="i sm" aria-hidden="true"><use href="#i-text"/></svg>How it reads</h5>
+              <div class="seg wide" role="group" aria-label="Read with"><span class="on">Text on screen</span><span>Jev (online)</span></div>
+              <p class="note">Reads the number after “Unread”, on this computer.</p>
+              <div class="callout plain"><svg class="i" aria-hidden="true"><use href="#i-q"/></svg><div><b>If no number is seen</b><p>“Is there unread mail?” answers Couldn't check, not No.</p></div></div>
+            </div>
+          </div>
+        </section>
+        <section class="panel stack" aria-label="Save results">
+          <div class="row"><div><p class="kicker">Outputs</p><h4 class="h-sub">Save results</h4></div><span class="st prop">Proposal · not decided</span></div>
+          <div class="pgrid">
+            <div class="choicebox"><div class="row start"><svg class="i" aria-hidden="true" style="color:var(--r2a-text-2)"><use href="#i-camera"/></svg><b>Screenshot of the game window</b></div><p class="note">mail_screenshot → a new PNG file each run</p></div>
+            <div class="choicebox"><div class="row start"><svg class="i" aria-hidden="true" style="color:var(--r2a-text-2)"><use href="#i-file"/></svg><b>Values to a text file</b></div><p class="note">unread_count, collected → a new file each run</p></div>
+          </div>
+          <div class="row"><span class="note"><svg class="i sm" aria-hidden="true" style="vertical-align:-3px"><use href="#i-folder"/></svg> ~/Documents/Record to Automate/Startup routine/ <span class="caption">(example folder)</span></span><span class="note">Keep values: <b style="color:var(--r2a-text)">this run only</b> <span class="caption">(proposal)</span></span></div>
+          <p class="note">Whether values carry over between runs or workflows, and whether files are added to or replaced, are still open choices. These boards show “new file each run” only as a proposal.</p>
+        </section>
+      </div>
+    </div>
+  </div>
+  <p class="statecap">Empty state</p>
+  <div class="app"><div class="body"><div class="callout plain"><svg class="i" aria-hidden="true"><use href="#i-list"/></svg><div><b>No values yet</b><p>Add a “Read text” step on the Actions tab to read a number or word from the screen. It will show up here with what uses it.</p><div class="btnrow" style="margin-top:10px"><span class="btn small">Add a Read text step</span></div></div></div></div></div>
+  <ul class="bnotes">
+    <li><b>Made by and used by are links</b> to the step or check, so following a value never needs a diagram.</li>
+    <li>The value name is shown in a monospace font because people may type it. Everything else uses everyday words.</li>
+  </ul>
+</section>
+
+<!-- =================================================================
+     09 DUPLICATE & PARTIAL RE-RECORD
+     ================================================================= -->
+<section class="board" id="b09" aria-labelledby="b09-t">
+  <header class="bhead">
+    <span class="bnum">09</span>
+    <p class="bstage">Stage 9 · Independent copy and partial re-record</p>
+    <h2 id="b09-t">Copy safely, redo a few steps, see what changes before accepting</h2>
+    <p class="bcap">A copy is always independent, and the dialog says so in one line. To re-record, you choose a range on the strip, get the game to the starting screen, record, then compare old and new. A value that would be lost is called out with three clear fixes, and Undo stays available afterwards.</p>
+    <div class="blabels"><span class="lab real">Starting frame is the real one</span><span class="lab ill">New take and its steps</span></div>
+  </header>
+  <div class="app">
+    <div class="body two">
+      <div class="sheet">
+        <div class="row start"><span class="bigicon ok" style="width:44px;height:44px;border-radius:12px"><svg class="i lg" aria-hidden="true"><use href="#i-copy"/></svg></span><div><h3 class="h-sec" style="margin:0">Make a copy</h3><p class="note">Of “Startup routine”</p></div></div>
+        <div class="field"><span class="lab2">Name</span><span class="input">Startup routine (copy)</span></div>
+        <div class="callout info"><svg class="i" aria-hidden="true"><use href="#i-copy"/></svg><div><b>The copy is separate</b><p>Editing one never changes the other. Linked copies aren't available.</p></div></div>
+        <div class="choice on"><i class="cb on"></i><b>Include recordings</b><span>So the copy keeps its screenshots</span></div>
+        <div class="choice"><i class="cb"></i><b>Include past runs</b><span>Off: the copy starts with no history</span></div>
+        <div class="btnrow" style="justify-content:flex-end"><span class="btn quiet">Cancel</span><span class="btn primary">Make copy</span></div>
+      </div>
+      <div class="panel stack">
+        <div><p class="kicker">Re-record part of Open mail</p><h3 class="h-sec">Steps 3–4</h3></div>
+        <div class="strip" aria-label="Range of steps 3 to 4 selected on the strip">
+          <span class="rng" style="left:15%;width:26%"></span>
+          <div class="bar"><span class="played" style="width:20%"></span></div>
+          <span class="mk" style="left:3%"><b>1</b></span><span class="mk" style="left:12%"><b>2</b></span><span class="mk on" style="left:20%"><b>3</b></span><span class="mk on" style="left:36%"><b>4</b></span><span class="mk" style="left:52%"><b>5</b></span><span class="mk" style="left:67%"><b>6</b></span><span class="mk" style="left:80%"><b>7</b></span><span class="mk" style="left:94%"><b>8</b></span>
+          <div class="ticks" style="margin-top:38px"><span>0:00</span><span>drag the edges to change the range</span><span>0:46</span></div>
+        </div>
+        <div class="pairs">
+          <div><h5><svg class="i sm" aria-hidden="true"><use href="#i-monitor"/></svg>Get the game to this screen first</h5>
+            <div class="crop c-full"><img src="/home/ian/record-to-automate/planning/mockups/assets/last-z-reference.png" alt="Real frame: the screen step 3 starts from"><span class="fr-badge">Real · step 3 start</span></div></div>
+          <div class="stack tight"><p class="note">Only these two steps are replaced. Everything before and after stays as it is.</p><p class="note">The old take is kept until you accept, and Undo works afterwards too.</p><span class="btn primary" style="justify-self:start"><span class="dot" aria-hidden="true"></span>Start re-recording</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="body" style="padding-top:0">
+      <section class="panel stack" aria-label="Review the new take">
+        <div class="row"><div><p class="kicker">Review before replacing</p><h3 class="h-sec">Use the new take for steps 3–4?</h3></div><span class="st ok"><svg class="i sm" aria-hidden="true"><use href="#i-check"/></svg>New take recorded · 0:11</span></div>
+        <div class="compare">
+          <div><h5><svg class="i sm" aria-hidden="true"><use href="#i-history"/></svg>Current</h5>
+            <div class="crop c-mail"><img src="/home/ian/record-to-automate/planning/mockups/assets/last-z-reference.png" alt="Real close-up of Mail from the current take"><span class="fr-badge">Real screenshot</span><i class="ov target" style="left:76.67%;top:30.93%;width:20%;height:34.13%"></i></div>
+            <ol start="3"><li>Click “Mail”</li><li class="gone">Read the unread count → <span class="mono">unread_count</span></li></ol></div>
+          <div><h5><svg class="i sm" aria-hidden="true"><use href="#i-rec"/></svg>New take</h5>
+            <div class="illus"><span class="fr-badge ill">Illustrative new frame</span><div class="wf"><div class="t">Mail <i></i></div><div class="r">Inbox · System</div><div class="r">Inbox · Alliance</div><div class="b">Collect all</div></div></div>
+            <ol start="3"><li>Click “Mail”</li><li class="add">Click “System” tab <span class="caption">(new)</span></li></ol></div>
+        </div>
+        <div class="callout"><svg class="i" aria-hidden="true"><use href="#i-alert"/></svg><div><b><span class="mono">unread_count</span> would no longer be read</b><p>“Is there unread mail?” uses it. Choose what to do before replacing:</p>
+          <div class="stack tight" style="margin-top:10px">
+            <div class="choice on"><i class="rb"></i><b>Keep the old “Read the unread count” step after the new ones</b><span>Recommended: the check keeps working</span></div>
+            <div class="choice"><i class="rb"></i><b>Pick a new step to read it</b><span>Choose a step from the new take</span></div>
+            <div class="choice"><i class="rb"></i><b>Leave it without a source</b><span>Run stays off until it's fixed</span></div>
+          </div></div></div>
+        <div class="row"><span class="note">Targets in new clicks are cut from the new take and checked like any new recording.</span><div class="btnrow"><span class="btn quiet">Discard new take</span><span class="btn primary">Use new take</span></div></div>
+      </section>
+      <div class="toast" style="justify-self:start;min-width:min(100%,460px)"><span><svg class="i sm" aria-hidden="true"><use href="#i-check"/></svg>Steps 3–4 replaced. Old take kept.</span><span class="btn small"><svg class="i sm" aria-hidden="true"><use href="#i-undo"/></svg>Undo</span></div>
+    </div>
+  </div>
+  <ul class="bnotes">
+    <li><b>Same name doesn't mean same value.</b> A new step is never assumed to make <span class="mono">unread_count</span> just because it's in the same position. You confirm it.</li>
+    <li>The copy dialog is the only place copies are explained. In the library, copies simply carry an “Independent copy” tag (board 14).</li>
+  </ul>
+</section>
+
+<!-- =================================================================
+     10 RUN PREP & LIVE RUN
+     ================================================================= -->
+<section class="board" id="b10" aria-labelledby="b10-t">
+  <header class="bhead">
+    <span class="bnum">10</span>
+    <p class="bstage">Stage 10 · Run preparation and live run</p>
+    <h2 id="b10-t">Check, then hand over the mouse with Stop always in reach</h2>
+    <p class="bcap">A short preflight confirms the game window and that every step is ready, and offers a debug toggle. During the run, a red frame says the app is in control. A run bar with a large Stop button and the current step is always on top, never inside a menu.</p>
+    <div class="blabels"><span class="lab real">Real screenshot</span><span class="lab ill">Run bar placement</span><span class="lab ex">Stop key shown as placeholder</span></div>
+  </header>
+  <div class="app">
+    <div class="body two">
+      <div class="sheet">
+        <div><p class="kicker">Run</p><h3 class="h-sec">Startup routine</h3></div>
+        <ul class="checklist">
+          <li><span class="ic" style="color:var(--r2a-safe)"><svg class="i" aria-hidden="true"><use href="#i-monitor"/></svg></span><span><b>Last Z window found</b><span class="d">Open and visible</span></span><span class="st ok"><svg class="i sm" aria-hidden="true"><use href="#i-check"/></svg>Ready</span></li>
+          <li><span class="ic" style="color:var(--r2a-safe)"><svg class="i" aria-hidden="true"><use href="#i-list"/></svg></span><span><b>All 8 steps are ready</b><span class="d">Nothing needs a look</span></span><span class="st ok"><svg class="i sm" aria-hidden="true"><use href="#i-check"/></svg>Ready</span></li>
+          <li><span class="ic" style="color:var(--r2a-safe)"><svg class="i" aria-hidden="true"><use href="#i-stop"/></svg></span><span><b>Emergency stop works</b><span class="d">Press <span class="kbd">stop key</span> any time <span class="caption">(key not decided)</span></span></span><span class="st ok"><svg class="i sm" aria-hidden="true"><use href="#i-check"/></svg>Tested</span></li>
+        </ul>
+        <div class="row" style="padding:12px 14px;border-radius:var(--r2a-radius-sm);background:var(--r2a-raised)"><div><b>Save screenshots for review</b><p class="note">Debug mode for this workflow: keeps what each step saw, so you can replay it.</p></div><span class="toggle on" aria-label="Debug on"></span></div>
+        <div class="callout info"><svg class="i" aria-hidden="true"><use href="#i-hand"/></svg><div><b>The app will use your mouse and keyboard</b><p>Please don't touch them while it runs. Stop is always on screen.</p></div></div>
+        <div class="btnrow" style="justify-content:flex-end"><span class="btn quiet">Cancel</span><span class="btn primary big"><svg class="i sm fill" aria-hidden="true"><use href="#i-play"/></svg>Start run</span></div>
+      </div>
+      <div class="stack">
+        <div class="ministate">
+          <span class="st bad"><svg class="i sm" aria-hidden="true"><use href="#i-x"/></svg>Can't run yet</span>
+          <b>Step 4 has no source for <span class="mono">unread_count</span></b>
+          <p class="note">A run doesn't start while a step is known to be broken. Fix it first.</p>
+          <div class="btnrow"><span class="btn small primary">Fix step 4</span><span class="btn small dis"><svg class="i sm fill" aria-hidden="true"><use href="#i-play"/></svg>Start run</span></div>
+        </div>
+        <div class="ministate">
+          <span class="st warn"><svg class="i sm" aria-hidden="true"><use href="#i-alert"/></svg>Game not open</span>
+          <b>Last Z isn't running</b>
+          <p class="note">Open it yourself, or let the workflow launch it from Steam and wait for the ready screen.</p>
+          <div class="btnrow"><span class="btn small"><svg class="i sm" aria-hidden="true"><use href="#i-launch"/></svg>Launch from Steam</span><span class="btn small quiet">Check again</span></div>
+        </div>
+        <div class="ministate">
+          <span class="st off"><svg class="i sm" aria-hidden="true"><use href="#i-hourglass"/></svg>Another run is active</span>
+          <b>“Daily reward check” is running</b>
+          <p class="note">Only one run controls the desktop at a time. What happens when you start a second one is still to be decided.</p>
+        </div>
+      </div>
+    </div>
+    <div class="body" style="padding-top:0">
+      <div class="runbar" role="region" aria-label="Live run bar">
+        <span class="hud" style="background:transparent;border:0;box-shadow:none;padding:0"><span class="rd" aria-hidden="true"></span></span>
+        <div class="msg"><b>Running Startup routine · step 3 of 8</b><span>Click “Mail”: found it, clicking inside the safe area</span></div>
+        <span class="btn small"><svg class="i sm fill" aria-hidden="true"><use href="#i-pause"/></svg>Pause</span>
+        <span class="btn stop big"><svg class="i sm fill" aria-hidden="true"><use href="#i-stop"/></svg>Stop now</span>
+        <span class="note">or press <span class="kbd">stop key</span></span>
+      </div>
+      <div class="crop c-full" role="img" aria-label="Real Last Z frame during a run, red takeover frame and next click marked">
+        <img src="/home/ian/record-to-automate/planning/mockups/assets/last-z-reference.png" alt="">
+        <span class="takeover"></span>
+        <span class="fr-badge">Real screenshot</span>
+        <div class="hud hud-on-shot"><span class="rd" aria-hidden="true"></span><b>App in control</b><span class="t opt">step 3/8</span><span class="hb stop"><svg class="i sm fill" aria-hidden="true"><use href="#i-stop"/></svg>Stop</span></div>
+        <i class="ov target" style="left:96.5%;top:79.82%;width:3%;height:5.69%"></i>
+        <i class="ov click" style="left:97.6%;top:83%"></i>
+        <span class="ov tag right" style="left:96.3%;top:79.4%">Next: click Mail</span>
+      </div>
+    </div>
+  </div>
+  <ul class="bnotes">
+    <li><b>Every Stop means the same thing.</b> The run bar, the in-game pill and the stop key all stop the run at once. None of them is ever inside a menu.</li>
+    <li>The red frame shows control, not danger. It disappears the moment control returns to you, at pause, stop or the end.</li>
+  </ul>
+</section>
+
+<!-- =================================================================
+     11 FAILURE & PAUSE FOR HELP
+     ================================================================= -->
+<section class="board" id="b11" aria-labelledby="b11-t">
+  <header class="bhead">
+    <span class="bnum">11</span>
+    <p class="bstage">Stage 11 · Failure and pause for help</p>
+    <h2 id="b11-t">Stop, say what was expected and what was seen, offer safe next steps</h2>
+    <p class="bcap">The default after a failed check is to stop and explain. Two pictures sit side by side, expected and seen, with the reason in words. When a click was sent but its effect is unknown, the app says so and never repeats it on its own. Looking at what happened and running again are separate, differently styled choices.</p>
+    <div class="blabels"><span class="lab ill">Both “seen” screens are illustrative</span><span class="lab ex">Timeout 5 s</span></div>
+  </header>
+  <div class="app">
+    <div class="body split">
+      <section class="panel stack" aria-label="Run stopped">
+        <div class="row start" style="align-items:flex-start"><span class="bigicon"><svg class="i xl" aria-hidden="true"><use href="#i-stop"/></svg></span><div style="flex:1;min-width:220px"><p class="kicker">Run stopped · today 09:14</p><h3 class="h-sec">Stopped at step 5: Click “Collect all”</h3><p class="support">“Collect all” didn't appear within 5 s <span class="caption">(example)</span>. Nothing was clicked. Your mouse and keyboard are yours again.</p></div></div>
+        <div class="row start"><span class="st bad"><svg class="i sm" aria-hidden="true"><use href="#i-x"/></svg>Not found</span><span class="st off"><svg class="i sm" aria-hidden="true"><use href="#i-clock"/></svg>Timed out after 5 s</span></div>
+        <div class="pairs">
+          <div><h5><svg class="i sm" aria-hidden="true"><use href="#i-target"/></svg>Expected</h5>
+            <div class="illus"><span class="fr-badge ill">Illustrative · from the recording</span><div class="wf"><div class="t">Mail <i></i></div><div class="r">System · Reward</div><div class="r">Alliance · Notice</div><div class="b" style="outline:2px solid var(--r2a-accent);outline-offset:2px">Collect all</div></div></div></div>
+          <div><h5><svg class="i sm" aria-hidden="true"><use href="#i-eye"/></svg>Seen at 09:14:07</h5>
+            <div class="illus"><span class="fr-badge ill">Illustrative · not a real game screen</span><div class="wf"><div class="t">Mail <i></i></div><div class="r">No mail</div><div class="b gone">no “Collect all” here</div></div></div></div>
+        </div>
+        <div class="pgrid">
+          <div class="choicebox inspect"><p class="h-sub"><svg class="i" aria-hidden="true"><use href="#i-eye"/></svg>See what happened</p><p class="note">Opens the replay. Read-only: nothing on your computer is touched.</p><span class="btn small" style="justify-self:start">Open replay</span></div>
+          <div class="choicebox restart"><p class="h-sub"><svg class="i" aria-hidden="true" style="color:var(--r2a-danger)"><use href="#i-play"/></svg>Run again from the start</p><p class="note">Takes control of your mouse and keyboard again, after the same checks.</p><span class="btn small" style="justify-self:start">Run again…</span></div>
+        </div>
+        <div class="row"><span class="note">Maybe the mail was already collected. You can add a “No” path for this check in Flow.</span><span class="btn primary">Edit step 5</span></div>
+      </section>
+      <div class="stack">
+        <div class="panel stack tight">
+          <span class="st unk" style="justify-self:start"><svg class="i sm" aria-hidden="true"><use href="#i-q"/></svg>Effect unknown</span>
+          <p class="h-sub">Step 6: Click “Close” was sent, but the result is unclear</p>
+          <p class="note">The click went out, then the screen didn't change as expected. It may or may not have worked. To be safe, the app <b style="color:var(--r2a-text)">won't click it again by itself</b>.</p>
+          <div class="callout plain"><svg class="i" aria-hidden="true"><use href="#i-hand"/></svg><div><b>Check the game yourself</b><p>Then run again from a point you choose, or edit the workflow.</p></div></div>
+        </div>
+        <div class="panel stack tight">
+          <p class="h-sub">The four reasons, always in words</p>
+          <dl class="facts" style="font-size:14px;line-height:20px;gap:10px 12px">
+            <dt><span class="st bad"><svg class="i sm" aria-hidden="true"><use href="#i-x"/></svg>Not found</span></dt><dd>Looked properly; it wasn't there.</dd>
+            <dt><span class="st warn"><svg class="i sm" aria-hidden="true"><use href="#i-alert"/></svg>More than one</span></dt><dd>Several matches, so it didn't pick one.</dd>
+            <dt><span class="st off"><svg class="i sm" aria-hidden="true"><use href="#i-clock"/></svg>Timed out</span></dt><dd>Kept checking until the limit.</dd>
+            <dt><span class="st unk"><svg class="i sm" aria-hidden="true"><use href="#i-q"/></svg>Effect unknown</span></dt><dd>Something was sent; result unclear.</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="statecap">Alternative chosen per workflow: pause for help</p>
+  <div class="app"><div class="body">
+    <div class="runbar" style="background:color-mix(in oklab,var(--r2a-warn) 13%,var(--r2a-surface));border-color:color-mix(in oklab,var(--r2a-warn) 45%,var(--r2a-line))">
+      <span class="bigicon warn" style="width:40px;height:40px;border-radius:12px"><svg class="i lg" aria-hidden="true"><use href="#i-pause"/></svg></span>
+      <div class="msg"><b>Paused for you at “Is there unread mail?”</b><span>Couldn't check: no number was seen. Your mouse and keyboard are yours, and nothing is recorded meanwhile. Put the game on the mail screen, then continue.</span></div>
+      <div class="btnrow"><span class="btn primary">Continue from this check</span><span class="btn stop">Stop run</span></div>
+    </div>
+  </div></div>
+  <ul class="bnotes">
+    <li><b>Inspect has a lavender eye; restart has a red play icon.</b> These colours match the replay frame (board 12) and the takeover frame (board 10), so the meaning carries across.</li>
+    <li>A configured recovery path, when set up in Flow, appears as its own lane. It isn't shown here because it's never the default.</li>
+  </ul>
+</section>
+
+<!-- =================================================================
+     12 RUNS & DEBUG REVIEW
+     ================================================================= -->
+<section class="board" id="b12" aria-labelledby="b12-t">
+  <header class="bhead">
+    <span class="bnum">12</span>
+    <p class="bstage">Stage 12 · Runs and debug review</p>
+    <h2 id="b12-t">Replay is a lavender, striped viewer that can't touch your desktop</h2>
+    <p class="bcap">Runs lists past runs in words. Opening one shows the replay frame: a striped ribbon, film-edge borders and no Pause or Stop, because nothing is running. Each step shows before and after, what was found, the safe area, the actual click, the branch taken and the values read.</p>
+    <div class="blabels"><span class="lab real">“Before” close-up is real</span><span class="lab ill">Actual click point, “after” screen, run history</span></div>
+  </header>
+  <div class="app">
+    <div class="appbar">
+      <span class="brand"><svg class="i sm" aria-hidden="true"><use href="#i-rec"/></svg>Record to Automate</span>
+      <nav class="anav" aria-label="App"><span>Library</span><span class="on">Runs</span><span>Settings</span></nav>
+      <span class="where"><svg class="i sm" aria-hidden="true"><use href="#i-laptop"/></svg>On this computer</span>
+    </div>
+    <div class="body split-l">
+      <div class="stack">
+        <div><p class="kicker">Startup routine</p><h3 class="h-sec">Runs</h3></div>
+        <ul class="runlist">
+          <li class="on"><svg class="i" aria-hidden="true" style="color:var(--r2a-danger)"><use href="#i-stop"/></svg><b>Today 09:14 · stopped at step 5</b><span>Not found: “Collect all” · debug on</span></li>
+          <li><svg class="i" aria-hidden="true" style="color:var(--r2a-safe)"><use href="#i-check"/></svg><b>Today 08:02 · finished</b><span>8 steps · unread_count 3 · debug on</span></li>
+          <li><svg class="i" aria-hidden="true" style="color:var(--r2a-text-2)"><use href="#i-pause"/></svg><b>Yesterday 21:40 · stopped by you</b><span>During step 2 · debug off, so only a summary</span></li>
+        </ul>
+        <div class="callout plain"><svg class="i" aria-hidden="true"><use href="#i-history"/></svg><div><b>When there are no runs</b><p>This list says “No runs yet”. Runs appear after the first one. With debug on, each run keeps its screenshots.</p></div></div>
+        <div class="btnrow"><span class="btn"><svg class="i sm fill" aria-hidden="true"><use href="#i-play"/></svg>Run again…</span><span class="btn quiet">Open this version</span></div>
+        <p class="caption" style="margin:0">Run again sits out here, outside the replay frame, and starts a real run after preflight.</p>
+      </div>
+      <div class="replay" aria-label="Read-only replay">
+        <div class="ribbon"><svg class="i" aria-hidden="true"><use href="#i-film"/></svg>Replay · today 09:14<span>Viewing a past run. Nothing here controls your computer.</span></div>
+        <div style="padding:16px 18px;display:grid;gap:16px">
+          <div class="scrub" aria-label="Steps in this run"><span><svg class="i sm" aria-hidden="true" style="color:var(--r2a-safe)"><use href="#i-check"/></svg>1 Ready</span><span><svg class="i sm" aria-hidden="true"><use href="#i-arrow"/></svg>Popup? No</span><span class="on"><svg class="i sm" aria-hidden="true" style="color:var(--r2a-safe)"><use href="#i-check"/></svg>3 Click Mail</span><span><svg class="i sm" aria-hidden="true" style="color:var(--r2a-safe)"><use href="#i-check"/></svg>4 Read count</span><span class="bad"><svg class="i sm" aria-hidden="true"><use href="#i-x"/></svg>5 Collect all</span></div>
+          <div class="film">
+            <div class="pairs">
+              <div><h5><svg class="i sm" aria-hidden="true"><use href="#i-eye"/></svg>Before the click · 09:14:02</h5>
+                <div class="crop c-mail" role="img" aria-label="Real close-up of Mail with found target, safe area and actual click"><img src="/home/ian/record-to-automate/planning/mockups/assets/last-z-reference.png" alt=""><span class="fr-badge">Real screenshot · reference frame</span>
+                  <i class="ov search" style="left:63.33%;top:9.6%;width:35.33%;height:76.8%"></i>
+                  <i class="ov target" style="left:76.67%;top:30.93%;width:20%;height:34.13%"></i>
+                  <i class="ov safe" style="left:80.67%;top:38.93%;width:12%;height:19.04%"></i>
+                  <i class="ov click" style="left:87%;top:50.1%"></i>
+                  <span class="ov tag right below" style="left:96.67%;top:65.06%">Clicked here</span>
+                </div></div>
+              <div><h5><svg class="i sm" aria-hidden="true"><use href="#i-eye"/></svg>After · 09:14:03</h5>
+                <div class="illus"><span class="fr-badge ill">Illustrative after-screen</span><div class="wf"><div class="t">Mail <i></i></div><div class="r">Unread 3</div><div class="r">System · Reward</div><div class="b">Collect all</div></div></div></div>
+            </div>
+          </div>
+          <div class="legend" style="margin-top:0">
+            <span><i class="sw target"></i><span><b>Found</b>: one match in the search area</span></span>
+            <span><i class="sw safe"></i><span><b>Safe area</b> used for this run</span></span>
+            <span><i class="sw click"></i><span><b>Actual click</b>: where it landed</span></span>
+            <span><i class="sw search"></i><span><b>Searched here</b></span></span>
+          </div>
+          <dl class="facts" style="font-size:14px;line-height:20px">
+            <dt>Branch taken</dt><dd>Is a popup showing? → <b>No</b> (screen read clearly)</dd>
+            <dt>Values read</dt><dd><span class="mono">unread_count</span> = 3 <span class="caption">(example)</span></dd>
+            <dt>Workflow version</dt><dd>Version 4, saved today 08:55. Open this version to see exactly what ran.</dd>
+            <dt>Missing frames</dt><dd>None for this step. Steps without a saved frame say “No screenshot was kept”.</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </div>
+  <ul class="bnotes">
+    <li><b>Lavender is used only for replay and inspection.</b> Live control is red, the editor's accent is blue, and found/safe is green. Every colour also comes with a word.</li>
+    <li>How long runs and screenshots are kept, and what can be exported, is still open, so no retention controls are shown.</li>
+  </ul>
+</section>
+
+<!-- =================================================================
+     13 SETTINGS & AI
+     ================================================================= -->
+<section class="board" id="b13" aria-labelledby="b13-t">
+  <header class="bhead">
+    <span class="bnum">13</span>
+    <p class="bstage">Stage 13 · Settings and AI</p>
+    <h2 id="b13-t">Optional helpers that use your own login, with each provider's status in words</h2>
+    <p class="bcap">AI helpers sit under one heading that says they're optional. Each card shows whether the tool is installed, whether its own sign-in looks ready, and which bill it uses. Online use always shows exactly what will be sent, first. Nothing here claims a connection works until a real check has run.</p>
+    <div class="blabels"><span class="lab ill">States illustrative</span><span class="lab prop">OpenRouter release scope</span><span class="lab sys">No credentials are shown or copied</span></div>
+  </header>
+  <div class="app">
+    <div class="appbar">
+      <span class="brand"><svg class="i sm" aria-hidden="true"><use href="#i-rec"/></svg>Record to Automate</span>
+      <nav class="anav" aria-label="App"><span>Library</span><span>Runs</span><span class="on">Settings</span></nav>
+      <span class="where"><svg class="i sm" aria-hidden="true"><use href="#i-laptop"/></svg>On this computer</span>
+    </div>
+    <div class="body settings">
+      <nav class="snav" aria-label="Settings sections"><span><svg class="i sm" aria-hidden="true"><use href="#i-gear"/></svg>General</span><span><svg class="i sm" aria-hidden="true"><use href="#i-shield"/></svg>Setup and access</span><span><svg class="i sm" aria-hidden="true"><use href="#i-play"/></svg>Running</span><span class="on"><svg class="i sm" aria-hidden="true"><use href="#i-spark"/></svg>AI helpers</span><span><svg class="i sm" aria-hidden="true"><use href="#i-folder"/></svg>Storage</span></nav>
+      <div class="stack">
+        <div class="callout ok"><svg class="i" aria-hidden="true"><use href="#i-laptop"/></svg><div><b>Everything works without these</b><p>Recording, editing, finding targets, running and replay never need AI or the internet.</p></div></div>
+        <div><p class="kicker">Help while editing</p><h3 class="h-sec">Use your own coding assistant</h3></div>
+        <div class="pgrid">
+          <div class="provider">
+            <div class="ph"><b>Claude Code</b><span class="st ok"><svg class="i sm" aria-hidden="true"><use href="#i-check"/></svg>Found</span></div>
+            <dl class="facts"><dt>Sign-in</dt><dd>Reported ready by Claude Code itself</dd><dt>Billing</dt><dd>Subscription through your own Claude login, not API billing. Eligibility depends on your plan.</dd><dt>Last check</dt><dd>Not checked yet</dd></dl>
+            <div class="btnrow"><span class="btn small primary">Run a check</span><span class="btn small quiet">Turn off</span></div>
+          </div>
+          <div class="provider">
+            <div class="ph"><b>Codex CLI</b><span class="st off"><svg class="i sm" aria-hidden="true"><use href="#i-x"/></svg>Not installed</span></div>
+            <p class="note">Codex CLI wasn't found on this computer. Install it and sign in with your own account, then come back.</p>
+            <div class="btnrow"><span class="btn small">How to install</span><span class="btn small quiet">Look again</span></div>
+          </div>
+        </div>
+        <div class="callout bad"><svg class="i" aria-hidden="true"><use href="#i-user"/></svg><div><b>Another time: “Claude Code says you're signed out”</b><p>Sign in using Claude Code itself. This app never asks for your password and never copies your login.</p></div></div>
+        <div><p class="kicker">Help while running · online</p><h3 class="h-sec">Screen decisions</h3></div>
+        <div class="pgrid">
+          <div class="provider">
+            <div class="ph"><b>Jev</b><span class="st warn"><svg class="i sm" aria-hidden="true"><use href="#i-cloud"/></svg>Online · experimental</span><span class="toggle" aria-label="Off"></span></div>
+            <p class="note">Can answer a check or find a target by sending a screenshot. You turn it on per step, and each step asks first (below).</p>
+          </div>
+          <div class="provider dim">
+            <div class="ph"><b>OpenRouter</b><span class="st prop">Proposal · not decided</span></div>
+            <p class="note">Planned as an optional way to reach more models, with its own API billing. Whether it's in the first release isn't decided.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="body" style="padding-top:0">
+      <div class="sheet" style="max-width:760px;justify-self:center;border-color:color-mix(in oklab,var(--r2a-warn) 50%,var(--r2a-line-strong))">
+        <div class="row start"><span class="bigicon warn" style="width:44px;height:44px;border-radius:12px"><svg class="i lg" aria-hidden="true"><use href="#i-cloud"/></svg></span><div><p class="kicker">Before anything goes online</p><h3 class="h-sec" style="margin:0">Step “Is a popup showing?” wants to use Jev</h3></div></div>
+        <div class="pairs">
+          <div><h5>This will be sent each time the check runs</h5><div class="crop c-full"><img src="/home/ian/record-to-automate/planning/mockups/assets/last-z-reference.png" alt="Real frame: example of the game-window screenshot that would be sent"><span class="fr-badge">Game window only</span></div></div>
+          <ul class="sendlist" style="align-content:start">
+            <li class="y"><svg class="i sm" aria-hidden="true"><use href="#i-cloud"/></svg>One screenshot of the Last Z window</li>
+            <li class="y"><svg class="i sm" aria-hidden="true"><use href="#i-cloud"/></svg>The question: “Is a popup showing?”</li>
+            <li class="n"><svg class="i sm" aria-hidden="true"><use href="#i-x"/></svg>Not sent: recordings, other windows, values, files</li>
+            <li class="n"><svg class="i sm" aria-hidden="true"><use href="#i-laptop"/></svg>Without the internet, this step answers “Couldn't check”</li>
+          </ul>
+        </div>
+        <div class="btnrow" style="justify-content:flex-end"><span class="btn quiet">Keep it offline</span><span class="btn primary">Allow for this step</span></div>
+      </div>
+    </div>
+  </div>
+  <ul class="bnotes">
+    <li><b>The billing line is plain text, not a badge.</b> It's too important to shorten: subscription through your own login versus API billing.</li>
+    <li>No green “Connected” appears without a real check. Here it reads “Not checked yet” on purpose. Which subscriptions are eligible is up to each provider, not promised here.</li>
+  </ul>
+</section>
+
+<!-- =================================================================
+     14 RETURN TO LIBRARY
+     ================================================================= -->
+<section class="board" id="b14" aria-labelledby="b14-t">
+  <header class="bhead">
+    <span class="bnum">14</span>
+    <p class="bstage">Stage 14 · Return to a saved workflow</p>
+    <h2 id="b14-t">Each card says what happened last and what to do next</h2>
+    <p class="bcap">Coming back, each workflow card shows its save state, its last run in words and one suggested next step. The busy, unavailable and copy states each look different without relying on colour alone.</p>
+    <div class="blabels"><span class="lab real">Thumbnail is the real frame</span><span class="lab ill">Workflows, times, Chrome example</span></div>
+  </header>
+  <div class="app">
+    <div class="appbar">
+      <span class="brand"><svg class="i sm" aria-hidden="true"><use href="#i-rec"/></svg>Record to Automate</span>
+      <nav class="anav" aria-label="App"><span class="on">Library</span><span>Runs</span><span>Settings</span></nav>
+      <span class="where"><svg class="i sm" aria-hidden="true"><use href="#i-laptop"/></svg>On this computer</span>
+    </div>
+    <header class="top">
+      <div class="ttl"><h3>Your workflows</h3><p><span>4 workflows · saved on this computer</span></p></div>
+      <div class="acts"><span class="btn primary"><span class="dot" aria-hidden="true"></span>New recording</span></div>
+    </header>
+    <div class="body">
+      <div class="cards">
+        <article class="wcard">
+          <div class="wthumb"><div class="crop c-mail"><img src="/home/ian/record-to-automate/planning/mockups/assets/last-z-reference.png" alt="Real close-up thumbnail of Last Z"></div></div>
+          <div class="row"><h4>Startup routine</h4><span class="st ok" style="padding:1px 8px"><svg class="i sm" aria-hidden="true"><use href="#i-check"/></svg>Saved</span></div>
+          <div class="meta"><span><svg class="i sm" aria-hidden="true"><use href="#i-monitor"/></svg>Last Z</span><span><svg class="i sm" aria-hidden="true"><use href="#i-list"/></svg>8 steps · 2 checks</span></div>
+          <div class="callout bad" style="padding:10px 12px"><svg class="i sm" aria-hidden="true"><use href="#i-stop"/></svg><div><b>Last run stopped at step 5</b><p>Today 09:14 · Not found: “Collect all”</p></div></div>
+          <div class="next"><span class="note">Next: <b>look at what happened</b></span><span class="btn small"><svg class="i sm" aria-hidden="true"><use href="#i-eye"/></svg>Open replay</span></div>
+        </article>
+        <article class="wcard">
+          <div class="wthumb"><div class="crop c-mail"><img src="/home/ian/record-to-automate/planning/mockups/assets/last-z-reference.png" alt="Real close-up thumbnail of Last Z"></div></div>
+          <div class="row"><h4>Startup routine (copy)</h4><span class="st info" style="padding:1px 8px"><svg class="i sm" aria-hidden="true"><use href="#i-copy"/></svg>Independent copy</span></div>
+          <div class="meta"><span><svg class="i sm" aria-hidden="true"><use href="#i-monitor"/></svg>Last Z</span><span><svg class="i sm" aria-hidden="true"><use href="#i-history"/></svg>Never run</span></div>
+          <div class="callout plain" style="padding:10px 12px"><svg class="i sm" aria-hidden="true"><use href="#i-check"/></svg><div><b>Saved 2 min ago</b><p>Changes here don't affect the original</p></div></div>
+          <div class="next"><span class="note">Next: <b>try a first run</b></span><span class="btn small primary"><svg class="i sm fill" aria-hidden="true"><use href="#i-play"/></svg>Run…</span></div>
+        </article>
+        <article class="wcard busy">
+          <div class="wthumb none"><span>No screenshot yet · illustrative</span></div>
+          <div class="row"><h4>Daily reward check</h4><span class="st bad" style="padding:1px 8px"><span class="hud" style="background:transparent;border:0;box-shadow:none;padding:0"><span class="rd" aria-hidden="true" style="width:8px;height:8px"></span></span>Running now</span></div>
+          <div class="meta"><span><svg class="i sm" aria-hidden="true"><use href="#i-monitor"/></svg>Last Z</span><span>step 2 of 5</span></div>
+          <div class="next"><span class="note">Controlling your mouse</span><span class="btn small stop"><svg class="i sm fill" aria-hidden="true"><use href="#i-stop"/></svg>Stop</span></div>
+        </article>
+        <article class="wcard">
+          <div class="wthumb none"><svg class="i lg" aria-hidden="true"><use href="#i-monitor"/></svg></div>
+          <div class="row"><h4>Download weekly report</h4><span class="st off" style="padding:1px 8px"><svg class="i sm" aria-hidden="true"><use href="#i-alert"/></svg>Unavailable</span></div>
+          <div class="meta"><span><svg class="i sm" aria-hidden="true"><use href="#i-monitor"/></svg>Google Chrome</span><span><svg class="i sm" aria-hidden="true"><use href="#i-check"/></svg>Last run finished · Mon</span></div>
+          <div class="next"><span class="note">Chrome isn't open, so <b>open it to run</b></span><span class="btn small quiet">Edit anyway</span></div>
+        </article>
+        <article class="wcard empty">
+          <svg class="i xl" aria-hidden="true" style="color:var(--r2a-text-3)"><use href="#i-plus"/></svg>
+          <b style="font-size:15px">Record another workflow</b>
+          <span class="note">Any app on this computer</span>
+        </article>
+        <div class="stack tight">
+          <p class="h-sub">Save states, as shown in the editor header</p>
+          <span class="st ok" style="justify-self:start"><svg class="i sm" aria-hidden="true"><use href="#i-check"/></svg>Saved</span>
+          <span class="st info" style="justify-self:start"><svg class="i sm" aria-hidden="true"><use href="#i-hourglass"/></svg>Saving…</span>
+          <span class="st bad" style="justify-self:start"><svg class="i sm" aria-hidden="true"><use href="#i-x"/></svg>Couldn't save: disk full</span>
+          <p class="note">If saving fails, your last saved version is untouched and the editor keeps your changes open until you choose where to put them. The wording is an example.</p>
+          <div class="toast"><span><svg class="i sm" aria-hidden="true"><use href="#i-check"/></svg>“Startup routine” saved</span><span class="btn small quiet">Open</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <ul class="bnotes">
+    <li><b>“Next” is the most useful single action</b> for that card's state: replay after a stop, a first run for a copy, Stop while busy, and open-the-app when unavailable.</li>
+    <li>Running cards keep a red edge and the same Stop button as the run bar, so control is visible even from the library.</li>
+  </ul>
+</section>
+
+<footer class="bnotes" style="list-style:none;padding:0;margin:0 0 24px">
+  <p style="margin:0">Opus v1 · static screenbook, nothing here is interactive or connected. Overview: <a href="overview-v1.html">overview-v1.html</a> · rationale: <a href="design-v1.md">design-v1.md</a> · <a href="#top">back to top</a>.</p>
+</footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Record to Automate · overview v1 (Opus)</title>
+<style>
+/* Opus v1 overview: same tokens and components as journey-v1.html, pruned to what this page uses. */
+html,body{margin:0;padding:0;background:none}
+.doc{--host-fg:var(--foreground,CanvasText);
+  --host-muted:var(--muted-foreground,GrayText);
+  --host-border:var(--border,color-mix(in oklab,CanvasText 20%,transparent));
+  --r2a-font:var(--font-sans,"Cantarell","Segoe UI Variable Text","Segoe UI","Ubuntu",system-ui,sans-serif);
+  --r2a-mono:var(--font-mono,"Cascadia Mono","Ubuntu Mono","DejaVu Sans Mono",ui-monospace,monospace);
+  font-family:var(--r2a-font);color:var(--host-fg);font-size:15px;line-height:22px;
+  max-width:1360px;margin:0 auto;container-type:inline-size;}
+.doc *{box-sizing:border-box}
+.doc svg.i{width:18px;height:18px;flex:none;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.doc svg.i.sm{width:16px;height:16px}
+.doc svg.i.lg{width:24px;height:24px}
+.doc svg.i.xl{width:32px;height:32px;stroke-width:1.6}
+.doc svg.i.fill{fill:currentColor;stroke:none}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.dhead{display:grid;gap:14px;margin:0 0 28px}
+.dhead h1{font-size:26px;line-height:32px;font-weight:650;margin:0;letter-spacing:-.01em}
+.dhead .sub{margin:0;font-size:14px;line-height:21px;color:var(--host-muted);max-width:80ch}
+.keyrow{display:flex;flex-wrap:wrap;gap:8px}
+.lab{display:inline-flex;align-items:center;gap:6px;font-size:12px;line-height:16px;font-weight:600;border-radius:999px;padding:3px 10px;white-space:nowrap;border:1px solid var(--host-border);color:var(--host-fg)}
+.lab::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor;opacity:.9}
+.lab.real{color:#3f9a72}
+.lab.ill{color:#b9842a}
+.lab.ex{color:#5b84c9}
+.board{margin:0 0 48px;scroll-margin-top:12px}
+.bhead{display:grid;grid-template-columns:auto 1fr;gap:4px 16px;align-items:start;margin:0 0 14px}
+.bnum{grid-row:span 3;font-size:30px;line-height:34px;font-weight:700;font-family:var(--r2a-mono);color:var(--host-muted);letter-spacing:-.02em}
+.bstage{margin:0;font-size:13px;line-height:18px;color:var(--host-muted);font-weight:600}
+.bhead h2{margin:0;font-size:21px;line-height:28px;font-weight:650;letter-spacing:-.005em}
+.app,.dark{color-scheme:dark;
+  --r2a-bg:var(--r2a-dark-bg,#0f1114);
+  --r2a-surface:var(--r2a-dark-surface,#14171b);
+  --r2a-raised:var(--r2a-dark-raised,#1a1e23);
+  --r2a-overlay:var(--r2a-dark-overlay,#21262c);
+  --r2a-hover:var(--r2a-dark-hover,#262c33);
+  --r2a-line:var(--r2a-dark-line,#272d34);
+  --r2a-line-strong:var(--r2a-dark-line-strong,#39414a);
+  --r2a-text:var(--r2a-dark-text,#eceef1);
+  --r2a-text-2:var(--r2a-dark-text-2,#aeb5be);
+  --r2a-text-3:var(--r2a-dark-text-3,#8a929c);
+  --r2a-accent:var(--r2a-dark-accent,#8fb8ff);
+  --r2a-accent-ink:var(--r2a-dark-accent-ink,#0b1424);
+  --r2a-accent-soft:color-mix(in oklab,var(--r2a-accent) 15%,transparent);
+  --r2a-safe:var(--r2a-dark-safe,#72dcaa);
+  --r2a-point:var(--r2a-dark-point,#ffd37d);
+  --r2a-warn:var(--r2a-dark-warn,#f2c063);
+  --r2a-danger:var(--r2a-dark-danger,#ff8b82);
+  --r2a-evidence:var(--r2a-dark-evidence,#c7b3ff); /* new: read-only replay only */
+  --r2a-radius:calc(var(--radius,8px) + 4px);
+  --r2a-radius-sm:var(--radius,8px);
+  color:var(--r2a-text);font-size:14px;line-height:20px;}
+.app{container-type:inline-size;background:var(--r2a-bg);border-radius:var(--r2a-radius);overflow:hidden;border:1px solid var(--r2a-line);position:relative}
+.top{display:flex;flex-wrap:wrap;gap:12px 16px;align-items:center;padding:20px 24px 16px}
+.top .ttl{margin-right:auto;min-width:0}
+.top h3{font-size:24px;line-height:32px;font-weight:650;margin:0;letter-spacing:-.01em}
+.top .ttl p{margin:2px 0 0;font-size:13px;line-height:18px;color:var(--r2a-text-2);display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center}
+.acts{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.tabs{display:flex;gap:4px;padding:0 24px;border-bottom:1px solid var(--r2a-line)}
+.tabs span{display:inline-flex;gap:8px;align-items:center;padding:10px 12px 12px;font-size:14px;color:var(--r2a-text-2);border-bottom:2px solid transparent;margin-bottom:-1px}
+.tabs span.on{color:var(--r2a-text);font-weight:600;border-bottom-color:var(--r2a-accent)}
+.body{padding:20px 24px 24px;display:grid;gap:20px;grid-template-columns:minmax(0,1fr)}
+@container (min-width:960px){.body.two{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}}
+@container (min-width:640px) and (max-width:959px){.body.two{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.panel{background:var(--r2a-surface);border-radius:var(--r2a-radius);padding:20px;min-width:0}
+.stack{display:grid;gap:16px;min-width:0;align-content:start}
+.stack>.btn,.stack>.st{justify-self:start}
+.stack.tight{gap:10px}
+.kicker{font-size:13px;line-height:18px;color:var(--r2a-text-2);margin:0}
+.h-sec{font-size:20px;line-height:26px;font-weight:650;margin:2px 0 0;letter-spacing:-.005em}
+.h-sub{font-size:16px;line-height:22px;font-weight:600;margin:0}
+.note{font-size:13px;line-height:18px;color:var(--r2a-text-2);margin:0}
+.caption{font-size:12px;line-height:16px;color:var(--r2a-text-3)}
+.mono{font-family:var(--r2a-mono);font-size:13px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:36px;padding:0 14px;border-radius:var(--r2a-radius-sm);
+  border:1px solid var(--r2a-line-strong);background:var(--r2a-raised);font-size:14px;line-height:20px;font-weight:550;white-space:nowrap;color:var(--r2a-text)}
+.btn.primary{background:var(--r2a-accent);color:var(--r2a-accent-ink);border-color:transparent}
+.btn.small{min-height:32px;padding:0 12px;font-size:13px}
+.btn.stop{background:var(--r2a-danger);color:#2a0705;border-color:transparent;font-weight:700}
+.btn .dot{width:9px;height:9px;border-radius:50%;background:var(--r2a-danger)}
+.btn.primary .dot{background:var(--r2a-accent-ink)}
+.btnrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.seg{display:inline-flex;padding:3px;border-radius:var(--r2a-radius-sm);background:var(--r2a-bg);border:1px solid var(--r2a-line)}
+.seg span{display:inline-flex;align-items:center;gap:6px;min-height:30px;padding:0 12px;border-radius:6px;font-size:13px;color:var(--r2a-text-2)}
+.seg span.on{background:var(--r2a-overlay);color:var(--r2a-text);font-weight:600}
+.seg.wide{display:flex;width:100%}
+.seg.wide span{flex:1;justify-content:center}
+.choice{display:grid;grid-template-columns:20px 1fr;column-gap:10px;row-gap:2px;align-items:start;padding:12px 14px;border-radius:var(--r2a-radius-sm);border:1px solid var(--r2a-line);background:var(--r2a-raised)}
+.choice.on{border-color:var(--r2a-accent);background:color-mix(in oklab,var(--r2a-accent) 9%,var(--r2a-raised))}
+.choice .rb{grid-row:span 2;width:18px;height:18px;margin-top:1px;border-radius:50%;border:2px solid var(--r2a-line-strong)}
+.choice.on .rb{border-color:var(--r2a-accent);box-shadow:inset 0 0 0 3px var(--r2a-raised),inset 0 0 0 9px var(--r2a-accent)}
+.choice b{font-size:14px;line-height:20px;font-weight:600}
+.choice span:not(.rb):not(.cb){font-size:13px;line-height:18px;color:var(--r2a-text-2)}
+.row{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.row.start{justify-content:flex-start}
+.st{display:inline-flex;gap:6px;align-items:center;font-size:13px;line-height:18px;font-weight:600;padding:3px 10px 3px 8px;border-radius:999px;white-space:nowrap;border:1px solid transparent}
+.st.ok{color:var(--r2a-safe);background:color-mix(in oklab,var(--r2a-safe) 12%,transparent)}
+.st.warn{color:var(--r2a-warn);background:color-mix(in oklab,var(--r2a-warn) 13%,transparent)}
+.st.bad{color:var(--r2a-danger);background:color-mix(in oklab,var(--r2a-danger) 13%,transparent)}
+.st.unk{color:var(--r2a-text);border:1px dashed var(--r2a-text-3);background:transparent}
+.crop{position:relative;overflow:hidden;border-radius:var(--r2a-radius-sm);background:#000;isolation:isolate;width:100%}
+.crop>img{position:absolute;max-width:none;display:block;user-select:none}
+.c-mail{aspect-ratio:16/10}
+.c-mail>img{width:666.667%;left:-566.667%;top:-448%}
+.fr-badge{position:absolute;z-index:3;left:8px;top:8px;display:inline-flex;gap:6px;align-items:center;font-size:12px;line-height:16px;font-weight:600;padding:2px 8px;border-radius:5px;background:rgba(10,12,15,.86);color:#fff}
+.fr-badge::before{content:"";width:7px;height:7px;border-radius:50%;background:#72dcaa}
+.fr-badge.ill::before{background:#f2c063}
+.ov{position:absolute;pointer-events:none;z-index:2}
+.ov.search{border:2px dashed rgba(255,255,255,.9);box-shadow:0 0 0 1px rgba(0,0,0,.55),inset 0 0 0 1px rgba(0,0,0,.55);border-radius:6px}
+.ov.target{border:2px solid var(--r2a-accent);box-shadow:0 0 0 2px rgba(0,0,0,.6);border-radius:4px}
+.ov.safe{background:color-mix(in oklab,var(--r2a-safe) 30%,transparent);border:1.5px solid var(--r2a-safe);border-radius:3px}
+.ov.excl{background:repeating-linear-gradient(45deg,rgba(0,0,0,.55) 0 3px,rgba(255,139,130,.6) 3px 6px);border:1px solid var(--r2a-danger);border-radius:2px}
+.ov.pt{width:7px;height:7px;margin:-3.5px 0 0 -3.5px;border-radius:50%;background:#fff;box-shadow:0 0 0 1.5px rgba(0,0,0,.75)}
+.ov.click{width:22px;height:22px;margin:-11px 0 0 -11px;border-radius:50%;border:2.5px solid var(--r2a-point);box-shadow:0 0 0 1.5px rgba(0,0,0,.7),inset 0 0 0 1.5px rgba(0,0,0,.7)}
+.ov.click::after{content:"";position:absolute;left:50%;top:50%;width:4px;height:4px;margin:-2px 0 0 -2px;border-radius:50%;background:var(--r2a-point)}
+.ov.tag{font-size:12px;line-height:16px;font-weight:600;padding:2px 7px;border-radius:5px;background:rgba(10,12,15,.88);color:#fff;white-space:nowrap;transform:translateY(calc(-100% - 4px))}
+.ov.tag.below{transform:translateY(4px)}
+.sentence{padding:14px 16px;border-radius:var(--r2a-radius-sm);background:var(--r2a-raised);border-left:3px solid var(--r2a-accent);font-size:15px;line-height:23px}
+.sentence .m{padding:1px 6px;border-radius:4px;font-weight:600;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.sentence .m.t{box-shadow:inset 0 0 0 1.5px var(--r2a-accent)}
+.sentence .m.s{box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.75);border:0;background:repeating-linear-gradient(90deg,transparent 0 0)}
+.sentence .m.g{background:color-mix(in oklab,var(--r2a-safe) 25%,transparent);box-shadow:inset 0 0 0 1.5px var(--r2a-safe)}
+.facts{display:grid;grid-template-columns:auto 1fr;gap:8px 16px;margin:0;font-size:13px;line-height:18px}
+.facts dt{color:var(--r2a-text-2)}
+.facts dd{margin:0}
+.flow{list-style:none;margin:0;padding:0;display:grid}
+.flow>li{position:relative;padding:0 0 18px}
+.flow>li::before{content:"";position:absolute;left:19px;top:40px;bottom:0;width:2px;background:var(--r2a-line-strong)}
+.flow>li:last-child::before{display:none}
+.fn{display:grid;grid-template-columns:40px 1fr;gap:14px;align-items:start}
+.fn .ico{position:relative;z-index:1;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:var(--r2a-raised);border:1px solid var(--r2a-line-strong);color:var(--r2a-text-2)}
+.fn.rec .ico{color:var(--r2a-danger)}
+.fn.if .ico{color:var(--r2a-accent);border-radius:10px;transform:rotate(45deg)}
+.fn.if .ico svg{transform:rotate(-45deg)}
+.fn .card{padding:8px 14px 10px;border-radius:var(--r2a-radius-sm);border:1px solid transparent}
+.fn.on .card{background:var(--r2a-raised);border-color:var(--r2a-accent)}
+.fn .card b{display:block;font-size:16px;line-height:22px;font-weight:600}
+.fn .card>span{display:block;font-size:13px;line-height:18px;color:var(--r2a-text-2)}
+.lanes{display:grid;gap:10px;margin:10px 0 0 54px;grid-template-columns:1fr}
+@container (min-width:620px){.lanes{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.lane{border-radius:var(--r2a-radius-sm);background:var(--r2a-bg);border:1px solid var(--r2a-line);padding:10px 12px;display:grid;gap:6px;align-content:start}
+.lane .ll{font-size:13px;line-height:18px;display:flex;gap:6px;align-items:center;font-weight:650}
+.lane .ll.yes{color:var(--r2a-safe)}
+.lane .ll.no{color:var(--r2a-text)}
+.lane .ll.unk{color:var(--r2a-warn)}
+.lane .lt{font-size:14px;line-height:20px;font-weight:600;display:flex;gap:8px;align-items:center}
+.lane .lt svg{color:var(--r2a-danger)}
+.lane .ld{font-size:13px;line-height:18px;color:var(--r2a-text-2)}
+.lane.unrec{border-style:dashed;border-color:var(--r2a-text-3);background:transparent}
+.lane.stopl{border-color:color-mix(in oklab,var(--r2a-warn) 45%,var(--r2a-line))}
+.runbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;padding:12px 16px;background:color-mix(in oklab,var(--r2a-danger) 16%,var(--r2a-surface));border:1px solid color-mix(in oklab,var(--r2a-danger) 45%,var(--r2a-line));border-radius:var(--r2a-radius-sm)}
+.runbar .msg{margin-right:auto;display:grid}
+.runbar .msg b{font-size:15px;line-height:21px}
+.runbar .msg span{font-size:13px;line-height:18px;color:var(--r2a-text-2)}
+.replay{border-radius:var(--r2a-radius);border:2px solid color-mix(in oklab,var(--r2a-evidence) 55%,transparent);background:color-mix(in oklab,var(--r2a-evidence) 5%,var(--r2a-bg));overflow:hidden}
+.ribbon{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;padding:10px 16px;font-size:14px;line-height:20px;color:#1b1430;font-weight:650;
+  background:repeating-linear-gradient(135deg,var(--r2a-evidence) 0 14px,color-mix(in oklab,var(--r2a-evidence) 85%,white) 14px 28px)}
+.ribbon span{font-weight:500;color:#2e2547}
+.film{position:relative;padding:12px 0}
+.film::before,.film::after{content:"";position:absolute;left:0;right:0;height:8px;background:repeating-linear-gradient(90deg,color-mix(in oklab,var(--r2a-evidence) 40%,transparent) 0 10px,transparent 10px 20px)}
+.film::before{top:0}
+.film::after{bottom:0}
+.bigicon{width:56px;height:56px;border-radius:16px;display:grid;place-items:center;background:color-mix(in oklab,var(--r2a-danger) 16%,var(--r2a-raised));color:var(--r2a-danger)}
+.bigicon.warn{background:color-mix(in oklab,var(--r2a-warn) 14%,var(--r2a-raised));color:var(--r2a-warn)}
+.bigicon.ok{background:color-mix(in oklab,var(--r2a-safe) 14%,var(--r2a-raised));color:var(--r2a-safe)}
+.choicebox{display:grid;gap:8px;padding:14px;border-radius:var(--r2a-radius-sm);border:1px solid var(--r2a-line);background:var(--r2a-raised)}
+.choicebox.inspect{border-color:color-mix(in oklab,var(--r2a-evidence) 55%,var(--r2a-line))}
+.choicebox.inspect .h-sub svg{color:var(--r2a-evidence)}
+.choicebox.restart{border-color:color-mix(in oklab,var(--r2a-danger) 40%,var(--r2a-line))}
+.choicebox .h-sub{display:flex;gap:8px;align-items:center}
+@container (max-width:560px){.top,.body{padding-left:16px;padding-right:16px}
+.tabs{padding:0 10px;overflow-x:auto}
+.panel{padding:16px}
+.top h3{font-size:22px;line-height:28px}}
+@container (max-width:640px){.doc .bnum{font-size:22px;line-height:28px}}
+.ov-split{display:grid;gap:14px;grid-template-columns:minmax(0,1fr);padding:14px 16px 16px}
+@container (min-width:620px){.ov-split{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);align-items:start}}
+.ov-split .sentence{font-size:14px;line-height:22px;padding:12px 14px}
+.ovfoot{margin:0 0 4px;font-size:14px;line-height:21px;color:var(--host-muted)}
+</style>
+</head>
+<body>
+<div class="doc">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<defs>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4.5v15l12-7.5z"/></symbol>
+  <symbol id="i-stop" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></symbol>
+  <symbol id="i-rec" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.5" fill="currentColor"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8 12.5 2.7 2.7L16 9.8"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3.5 2.5 20h19z"/><path d="M12 10v4.5M12 17.2v.3"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m9 9 6 6M15 9l-6 6"/></symbol>
+  <symbol id="i-q" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.5a2.5 2.5 0 1 1 3.4 2.3c-.6.3-1 .8-1 1.5v.7M12 17v.3"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h15M14 7l5 5-5 5"/></symbol>
+  <symbol id="i-text" viewBox="0 0 24 24"><path d="M5 6V4.5h14V6M12 4.5v15M9 19.5h6"/></symbol>
+  <symbol id="i-image" viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="15" rx="2"/><circle cx="9" cy="10" r="1.8"/><path d="m4 18 5.5-5 4 3.5 2.5-2 4 3.5"/></symbol>
+  <symbol id="i-cross" viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/><path d="M12 2v5M12 17v5M2 12h5M17 12h5"/></symbol>
+  <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></symbol>
+  <symbol id="i-flow" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="6" rx="1.5"/><rect x="14" y="15" width="7" height="6" rx="1.5"/><path d="M6.5 9v4a2 2 0 0 0 2 2H14"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1"/><circle cx="4.5" cy="12" r="1"/><circle cx="4.5" cy="18" r="1"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-film" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 4v16M17 4v16M3 8h4M3 12h4M3 16h4M17 8h4M17 12h4M17 16h4"/></symbol>
+  <symbol id="i-branch" viewBox="0 0 24 24"><path d="M6 4v8a4 4 0 0 0 4 4h8M6 12h12"/><path d="m15 9 3 3-3 3M15 13l3 3-3 3"/></symbol>
+</defs>
+</svg>
+<header class="dhead" id="top" style="margin-bottom:20px;gap:10px">
+  <h1 style="font-size:22px;line-height:28px">Record to Automate · Opus v1 at a glance</h1>
+  <p class="sub" style="color:var(--host-fg);font-size:15px;line-height:22px">Three scenes from the <a href="journey-v1.html">full 14-board journey screenbook</a>. Steps read like sentences that match the marks on the screenshot. You get four answers instead of a score. Control looks red; looking back looks lavender.</p>
+  <div class="keyrow"><span class="lab real">Real screenshot</span><span class="lab ill">Illustrative</span><span class="lab ex">Example value</span></div>
+</header>
+
+<section class="board" id="s1" aria-labelledby="s1-t" style="margin-bottom:28px">
+  <header class="bhead"><span class="bnum">A</span><p class="bstage">Board 06 · Edit an action</p><h2 id="s1-t">The screenshot is the editor, and the sentence explains it</h2></header>
+  <div class="app">
+    <header class="top" style="padding:16px 20px 12px">
+      <div class="ttl"><h3 style="font-size:20px;line-height:26px">Startup routine</h3><p><span>Last Z · saved 2 min ago</span></p></div>
+      <div class="acts"><span class="btn small"><span class="dot" aria-hidden="true"></span>Record</span><span class="btn primary small"><svg class="i sm fill" aria-hidden="true"><use href="#i-play"/></svg>Run</span></div>
+    </header>
+    <div class="tabs" style="padding:0 16px"><span class="on"><svg class="i sm" aria-hidden="true"><use href="#i-target"/></svg>Actions</span><span><svg class="i sm" aria-hidden="true"><use href="#i-flow"/></svg>Flow</span><span><svg class="i sm" aria-hidden="true"><use href="#i-list"/></svg>Values</span></div>
+    <div class="ov-split">
+      <div class="stack tight">
+        <div class="crop c-mail" role="img" aria-label="Close-up of the real Last Z screenshot around Mail, with search area, target and safe click area">
+          <img src="/home/ian/record-to-automate/planning/mockups/assets/last-z-reference.png" alt="">
+          <span class="fr-badge">Real screenshot · close-up</span>
+          <i class="ov search" style="left:63.33%;top:9.6%;width:35.33%;height:76.8%"></i>
+          <span class="ov tag below" style="left:63.33%;top:86.4%">Search area</span>
+          <i class="ov target" style="left:76.67%;top:30.93%;width:20%;height:34.13%"></i>
+          <span class="ov tag" style="left:63.9%;top:30.93%;transform:translate(-100%,0)">Mail (target)</span>
+          <i class="ov safe" style="left:80.67%;top:38.93%;width:12%;height:19.04%"></i>
+          <i class="ov excl" style="left:90.67%;top:29.33%;width:6%;height:9.6%"></i>
+          <i class="ov pt" style="left:82.6%;top:42%"></i><i class="ov pt" style="left:88.4%;top:41.2%"></i><i class="ov pt" style="left:84.6%;top:48.5%"></i><i class="ov pt" style="left:90.8%;top:47.4%"></i><i class="ov pt" style="left:82.4%;top:54.8%"></i><i class="ov pt" style="left:87.7%;top:55.6%"></i>
+        </div>
+        <p class="note">Bounds drawn by eye on the one real frame. The dots are preview points: drawn only, nothing is clicked. A preview gives one of three answers:</p>
+        <div class="row start" style="gap:6px" aria-label="Possible preview answers"><span class="st ok"><svg class="i sm" aria-hidden="true"><use href="#i-check"/></svg>Found one</span><span class="st warn"><svg class="i sm" aria-hidden="true"><use href="#i-alert"/></svg>More than one</span><span class="st bad"><svg class="i sm" aria-hidden="true"><use href="#i-x"/></svg>Not found</span></div>
+
+      </div>
+      <aside class="stack tight" aria-label="Selected action">
+        <div><p class="kicker">Step 3 · Click</p><h3 class="h-sec">Click “Mail”</h3></div>
+        <p class="sentence">Find <span class="m t">the Mail button</span> inside <span class="m s">the bottom-right corner</span>, then click anywhere in <span class="m g">the green area</span>.</p>
+        <div class="seg wide" role="group" aria-label="Find it by"><span><svg class="i sm" aria-hidden="true"><use href="#i-cross"/></svg>Fixed</span><span class="on"><svg class="i sm" aria-hidden="true"><use href="#i-image"/></svg>Picture</span><span><svg class="i sm" aria-hidden="true"><use href="#i-text"/></svg>Text</span></div>
+        <div class="choice on"><i class="rb"></i><b>Vary inside the safe area</b><span>Only the position changes. Timing is never randomised.</span></div>
+        <div class="btnrow"><span class="btn primary small"><svg class="i sm" aria-hidden="true"><use href="#i-eye"/></svg>Preview on this screenshot</span></div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<section class="board" id="s2" aria-labelledby="s2-t" style="margin-bottom:28px">
+  <header class="bhead"><span class="bnum">B</span><p class="bstage">Board 07 · Flow</p><h2 id="s2-t">Each check has three answers, and “Couldn't check” isn't “No”</h2></header>
+  <div class="app">
+    <div class="body" style="padding:16px">
+      <ol class="flow">
+        <li style="padding-bottom:10px"><div class="fn rec"><span class="ico"><svg class="i" aria-hidden="true"><use href="#i-rec"/></svg></span><span class="card"><b>Open mail</b><span>3 steps · recorded · makes <span class="mono">unread_count</span></span></span></div></li>
+        <li style="padding-bottom:0"><div class="fn if on"><span class="ico"><svg class="i" aria-hidden="true"><use href="#i-branch"/></svg></span><span class="card"><b>Is there unread mail?</b><span>Uses <span class="mono">unread_count</span> &gt; 0</span></span></div>
+          <div class="lanes">
+            <div class="lane"><span class="ll yes"><svg class="i sm" aria-hidden="true"><use href="#i-check"/></svg>Yes</span><span class="lt"><svg class="i sm" aria-hidden="true"><use href="#i-rec"/></svg>Collect all</span><span class="ld">2 recorded steps</span></div>
+            <div class="lane unrec"><span class="ll no"><svg class="i sm" aria-hidden="true"><use href="#i-arrow"/></svg>No</span><span class="lt" style="font-weight:500;color:var(--r2a-text-2)">Close mail</span><span class="ld">Not recorded yet, so there's no video</span></div>
+            <div class="lane stopl"><span class="ll unk"><svg class="i sm" aria-hidden="true"><use href="#i-q"/></svg>Couldn't check</span><span class="lt" style="font-weight:500">Stop and explain</span><span class="ld">Default</span></div>
+          </div></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section class="board" id="s3" aria-labelledby="s3-t" style="margin-bottom:20px">
+  <header class="bhead"><span class="bnum">C</span><p class="bstage">Boards 10–12 · Run, stop, look back</p><h2 id="s3-t">Control looks red, explanations are plain, and replay can't click</h2></header>
+  <div class="app">
+    <div class="body two" style="padding:16px;gap:16px">
+      <div class="stack tight">
+        <div class="runbar" style="padding:10px 12px" role="region" aria-label="Live run bar">
+          <div class="msg"><b style="font-size:14px">Running · step 3 of 8</b><span>Click “Mail”</span></div>
+          <span class="btn stop"><svg class="i sm fill" aria-hidden="true"><use href="#i-stop"/></svg>Stop now</span>
+        </div>
+        <section class="panel stack tight" style="padding:16px" aria-label="Run stopped">
+          <div class="row start" style="align-items:flex-start;flex-wrap:nowrap"><span class="bigicon" style="width:40px;height:40px;border-radius:12px"><svg class="i lg" aria-hidden="true"><use href="#i-stop"/></svg></span><div><h3 class="h-sub">Stopped at step 5: Click “Collect all”</h3><p class="note">It didn't appear within 5 s <span class="caption">(example)</span>. Nothing was clicked.</p></div></div>
+          <div class="row start" style="gap:6px"><span class="st bad"><svg class="i sm" aria-hidden="true"><use href="#i-x"/></svg>Not found</span><span class="st unk"><svg class="i sm" aria-hidden="true"><use href="#i-q"/></svg>Effect unknown is never retried</span></div>
+          <div class="choicebox inspect" style="padding:10px 12px;gap:4px"><p class="h-sub" style="font-size:14px"><svg class="i sm" aria-hidden="true"><use href="#i-eye"/></svg>See what happened</p><p class="note">Read-only replay</p></div>
+          <div class="choicebox restart" style="padding:10px 12px;gap:4px"><p class="h-sub" style="font-size:14px"><svg class="i sm" aria-hidden="true" style="color:var(--r2a-danger)"><use href="#i-play"/></svg>Run again from the start</p><p class="note">Takes control again after checks</p></div>
+        </section>
+      </div>
+      <div class="replay" aria-label="Read-only replay">
+        <div class="ribbon" style="padding:8px 12px;font-size:13px"><svg class="i sm" aria-hidden="true"><use href="#i-film"/></svg>Replay · 09:14<span>Nothing here controls your computer</span></div>
+        <div style="padding:12px;display:grid;gap:10px">
+          <div class="film" style="padding:10px 0">
+            <div class="crop c-mail" role="img" aria-label="Real close-up of Mail with found target, safe area and an illustrative actual click point"><img src="/home/ian/record-to-automate/planning/mockups/assets/last-z-reference.png" alt=""><span class="fr-badge">Real · before the click</span>
+              <i class="ov target" style="left:76.67%;top:30.93%;width:20%;height:34.13%"></i>
+              <i class="ov safe" style="left:80.67%;top:38.93%;width:12%;height:19.04%"></i>
+              <i class="ov click" style="left:87%;top:50.1%"></i>
+            </div>
+          </div>
+          <dl class="facts"><dt>Found</dt><dd>One match</dd><dt>Clicked</dt><dd>Inside the safe area <span class="caption">(point illustrative)</span></dd><dt>Branch</dt><dd>Popup? → No</dd><dt>Values</dt><dd><span class="mono">unread_count</span> = 3 <span class="caption">(example)</span></dd></dl>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<p class="ovfoot">Also in the <a href="journey-v1.html">full screenbook</a>: setup with permission refused, the recording bar, processing, values and file outputs (shown as a proposal), re-record with value loss and Undo, pause for help, own-login AI settings with consent before going online, and the library's busy and unavailable cards.</p>
+
+</div>
+</body>
+</html>
