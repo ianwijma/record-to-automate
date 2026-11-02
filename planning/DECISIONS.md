@@ -21,7 +21,7 @@ Recorded on 2 November 2026. This is the source of truth for user choices; examp
 | AI harnesses | Reuse the user’s Claude Code and Codex CLI harnesses and their own eligible subscription authentication; configure integrations in the UI. Do not substitute API billing without making the distinction explicit. |
 | Runtime AI | Include Jev as an optional screen-decision/visual-target method. Hosted calls are optional and explicit. |
 | Additional providers | OpenRouter is the intended optional provider for access to additional models. Release priority remains open. |
-| Selected design | [Opus v2 design document](design/opus/design-v2.md) and [sixteen-board journey](design/opus/journey-v2.html) are the chosen design following independent authoring, mutual review and iteration. Astra’s alternative design has been removed at the user’s request. |
+| Selected design | The [design document](design/DESIGN.md) and [sixteen-board journey](design/journey.html) define the chosen application design. |
 | Appearance | Approved polished dark visual direction, stronger typography, generous spacing, and progressive disclosure. |
 | Editor organization | Approved action editing with screenshot context, understandable flow organization, and values inspection. |
 | Click variation | Position variation inside an intended safe click area only. No timing randomization. No claim that this guarantees avoiding bot detection. |
